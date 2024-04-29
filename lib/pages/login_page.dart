@@ -79,6 +79,7 @@ class _LoginPageState extends State<LoginPage> {
               //   size: 100,
               // )
               
+              // texto placeholder, mudar pra um logo depois
               const Text (
                 "YE Gestão de Saúde",
                 style: TextStyle(
