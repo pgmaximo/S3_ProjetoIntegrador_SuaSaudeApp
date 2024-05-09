@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/button_page.dart';
 import 'package:teste_firebase/pages/add_remedio_page.dart';
 
@@ -7,12 +8,9 @@ class RemediosPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Center(child: Text("Medicamentos", style: TextStyle(color: Colors.white, fontSize: 40))),
-        backgroundColor: Colors.grey,
-        ),
-      body: const Column(
+    return const Scaffold(
+      appBar: AppBarWidget(titulo: 'Medicamentos', logout: false),
+      body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Padding(

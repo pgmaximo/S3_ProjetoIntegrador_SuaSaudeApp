@@ -13,8 +13,8 @@ class _ConsultPageState extends State<ConsultPage> {
   Widget build(BuildContext context) {
     return const Scaffold(
       appBar: AppBarWidget(
-        titulo: "Home Page", 
-        voltar: true,
+        titulo: 'Pagina de consulta', 
+        logout: false,
       ),
 
       body: Center(
