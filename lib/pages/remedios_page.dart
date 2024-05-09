@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
-import 'package:teste_firebase/components/button_page.dart';
+import 'package:teste_firebase/components/page_button.dart';
 import 'package:teste_firebase/pages/add_remedio_page.dart';
 
 class RemediosPage extends StatelessWidget {
