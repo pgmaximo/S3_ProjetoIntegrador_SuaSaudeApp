@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
+import 'package:teste_firebase/components/medicamento_hive.dart';
 import 'package:teste_firebase/pages/remedios_page.dart';
 import 'package:teste_firebase/services/medicamento_service.dart';
 
@@ -14,16 +16,19 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
   final MedicamentoService medicamentoService = MedicamentoService();
   String? medicamentoSelec;
   List<String> nomeMedicamento = [];
-  List<String> filteredNomeMedicamento = [];
-  TextEditingController searchController = TextEditingController();
+  List<String> nomeMedicamentoFiltrado = [];
+  TextEditingController controleBusca = TextEditingController();
 
-  List<String> times = List.generate(48, (index) => "${index ~/ 2}:${(index % 2 * 30).toString().padLeft(2, '0')}");
-  List<String> periods = List.generate(30, (index) => '${index + 1} dias');
-  List<String> intervals = List.generate(24, (index) => '${index + 1}h');
+  List<String> horas = List.generate(
+      48,
+      (index) =>
+          "${index ~/ 2}:${(index % 2 * 30).toString().padLeft(2, '0')}");
+  List<String> periodos = List.generate(30, (index) => '${index + 1} dias');
+  List<String> intervalos = List.generate(24, (index) => '${index + 1}h');
 
-  String? selectedTime;
-  String? selectedPeriod;
-  String? selectedInterval;
+  String? horaSelec;
+  String? periodoSelec;
+  String? intervaloSelec;
 
   @override
   void initState() {
@@ -31,7 +36,7 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
     medicamentoService.getMedicationNames().listen((names) {
       setState(() {
         nomeMedicamento = names;
-        filteredNomeMedicamento = names;
+        nomeMedicamentoFiltrado = names;
         if (nomeMedicamento.isNotEmpty) {
           medicamentoSelec = nomeMedicamento.first;
         }
@@ -40,8 +45,8 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
       print("Ocorreu um erro ao carregar os nomes dos medicamentos: $error");
     });
 
-    searchController.addListener(() {
-      filterSearchResults(searchController.text);
+    controleBusca.addListener(() {
+      filterSearchResults(controleBusca.text);
     });
   }
 
@@ -50,15 +55,17 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
         .where((item) => item.toLowerCase().contains(query.toLowerCase()))
         .toList();
     setState(() {
-      filteredNomeMedicamento = dummyListData;
-      medicamentoSelec = dummyListData.contains(medicamentoSelec) ? medicamentoSelec : null;
+      nomeMedicamentoFiltrado = dummyListData;
+      medicamentoSelec =
+          dummyListData.contains(medicamentoSelec) ? medicamentoSelec : null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppBarWidget(titulo: 'Adicionar Medicamento', logout: false),
+      appBar:
+          const AppBarWidget(titulo: 'Adicionar Medicamento', logout: false),
       body: Column(
         children: [
           Expanded(
@@ -68,7 +75,7 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: searchController,
+                      controller: controleBusca,
                       decoration: const InputDecoration(
                         labelText: 'Pesquisar Medicamento',
                         suffixIcon: Icon(Icons.search),
@@ -83,16 +90,17 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
                           medicamentoSelec = newValue;
                         });
                       },
-                      items: filteredNomeMedicamento.map<DropdownMenuItem<String>>((String name) {
+                      items: nomeMedicamentoFiltrado
+                          .map<DropdownMenuItem<String>>((String name) {
                         return DropdownMenuItem<String>(
                           value: name,
                           child: Text(name),
                         );
                       }).toList(),
                     ),
-                    buildDropdown("Horário", selectedTime, times),
-                    buildDropdown("Período", selectedPeriod, periods),
-                    buildDropdown("Intervalo", selectedInterval, intervals),
+                    buildDropdown("Horário", horaSelec, horas),
+                    buildDropdown("Período", periodoSelec, periodos),
+                    buildDropdown("Intervalo", intervaloSelec, intervalos),
                   ],
                 ),
               ),
@@ -108,7 +116,8 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
                   onPressed: () {
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => const RemediosPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const RemediosPage()),
                       (Route<dynamic> route) => false,
                     );
                   },
@@ -119,10 +128,11 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    // Implement save functionality or other actions here
+                    saveMedicamento();
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => const RemediosPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const RemediosPage()),
                       (Route<dynamic> route) => false,
                     );
                   },
@@ -137,6 +147,20 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
     );
   }
 
+  void saveMedicamento() async {
+    final box = Hive.box<MedicamentoHive>('medicamentosBox');
+    final novoMedicamento = MedicamentoHive(
+        nome: medicamentoSelec ?? "Nome padrão",
+        horario: horaSelec ?? "08:00",
+        periodo: periodoSelec ?? "1 dia",
+        intervalo: intervaloSelec ?? "1h");
+    await box.add(novoMedicamento);
+
+    // Opcional: Mostra um snackbar ou outro feedback
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Medicamento salvo com sucesso!")));
+  }
+
   Widget buildDropdown(String title, String? value, List<String> options) {
     return ListTile(
       title: DropdownButton<String>(
@@ -147,13 +171,13 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
           setState(() {
             switch (title) {
               case "Horário":
-                selectedTime = newValue;
+                horaSelec = newValue;
                 break;
               case "Período":
-                selectedPeriod = newValue;
+                periodoSelec = newValue;
                 break;
               case "Intervalo":
-                selectedInterval = newValue;
+                intervaloSelec = newValue;
                 break;
               default:
             }
