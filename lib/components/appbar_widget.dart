@@ -5,8 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String titulo;
   final bool logout;
-  /*TRUE = HABILITA O LOGOUT (OU SEJA É TELA INICIAL) : FALSE = APENAS A SETA DE logout*/
-  const AppBarWidget({super.key, required this.titulo, required this.logout});
+  /*FALSE (padrão) = Botão para voltar pagina | TRUE = Botão para logout*/
+  const AppBarWidget({super.key, required this.titulo, this.logout = false});
 
   // sign user out
   void signUserOut() {

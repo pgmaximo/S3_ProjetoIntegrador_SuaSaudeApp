@@ -9,7 +9,9 @@ class RemediosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: AppBarWidget(titulo: 'Medicamentos', logout: false),
+      appBar: AppBarWidget(
+        titulo: 'Medicamentos'
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
