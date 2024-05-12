@@ -10,15 +10,10 @@ class RemediosPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     return Scaffold(
-      appBar: AppBarWidget(
+      appBar: const AppBarWidget(
         titulo: 'Medicamentos'
       ),
-=======
-    return Scaffold(
-      appBar: const AppBarWidget(titulo: 'Medicamentos', logout: false),
->>>>>>> e4d59f6714110ac95e0a71488e6fb18b1c6e149d
       body: Column(
         children: [
           Expanded(

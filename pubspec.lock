@@ -519,10 +519,7 @@ packages:
       sha256: d584fa6707a52763a52446f02cc621b077888fb63b93bbcb1143a7be5a0c0c04
       url: "https://pub.dev"
     source: hosted
-<<<<<<< HEAD
     version: "1.11.0"
-=======
-    version: "1.12.0"
   mime:
     dependency: transitive
     description:
@@ -539,7 +536,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
->>>>>>> e4d59f6714110ac95e0a71488e6fb18b1c6e149d
   path:
     dependency: transitive
     description:
@@ -728,10 +724,7 @@ packages:
       sha256: "5c2f730018264d276c20e4f1503fd1308dfbbae39ec8ee63c5236311ac06954b"
       url: "https://pub.dev"
     source: hosted
-<<<<<<< HEAD
     version: "0.6.1"
-=======
-    version: "0.7.0"
   timing:
     dependency: transitive
     description:
@@ -740,7 +733,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
->>>>>>> e4d59f6714110ac95e0a71488e6fb18b1c6e149d
   typed_data:
     dependency: transitive
     description:
@@ -764,10 +756,7 @@ packages:
       sha256: b3d56ff4341b8f182b96aceb2fa20e3dcb336b9f867bc0eafc0de10f1048e957
       url: "https://pub.dev"
     source: hosted
-<<<<<<< HEAD
     version: "13.0.0"
-=======
-    version: "14.2.1"
   watcher:
     dependency: transitive
     description:
@@ -776,7 +765,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
->>>>>>> e4d59f6714110ac95e0a71488e6fb18b1c6e149d
   web:
     dependency: transitive
     description:
