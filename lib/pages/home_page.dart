@@ -1,5 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:teste_firebase/components/appbar_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -16,12 +17,11 @@ class HomePage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           actions: [
-            IconButton(key: const Key("logout"), onPressed: signUserOut, icon: const Icon(Icons.logout)),
+            IconButton(onPressed: signUserOut, icon: const Icon(Icons.logout)),
           ],
         ),
         body: Center(
           child: Text(
-            key: const Key("boasvindas"),
             "logado como: ${user.email!}",
             // "logado como: " + user.email!,
             style: const TextStyle(fontSize: 20),

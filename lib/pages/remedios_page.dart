@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:teste_firebase/components/button_page.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:teste_firebase/components/appbar_widget.dart';
+import 'package:teste_firebase/components/page_button.dart';
 import 'package:teste_firebase/pages/add_remedio_page.dart';
+import 'package:teste_firebase/components/medicamento_hive.dart'; // Certifique-se de importar a classe Medicamento
 
 class RemediosPage extends StatelessWidget {
   const RemediosPage({super.key});
@@ -8,21 +11,46 @@ class RemediosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(child: Text("Medicamentos", style: TextStyle(color: Colors.white, fontSize: 40))),
-        backgroundColor: Colors.grey,
-        ),
-      body: const Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+      appBar: const AppBarWidget(
+        titulo: 'Medicamentos'
+      ),
+      body: Column(
         children: [
-          Padding(
+          Expanded(
+            child: ValueListenableBuilder(
+              valueListenable: Hive.box<MedicamentoHive>('medicamentosBox').listenable(),
+              builder: (context, Box<MedicamentoHive> box, _) {
+                if (box.values.isEmpty) {
+                  return const Center(
+                    child: Text("Nenhum medicamento adicionado."),
+                  );
+                }
+                return ListView.builder(
+                  itemCount: box.values.length,
+                  itemBuilder: (context, index) {
+                    MedicamentoHive med = box.getAt(index) as MedicamentoHive;
+                    return ListTile(
+                      title: Text(med.nome),
+                      subtitle: Text('Horário: ${med.horario}, Período: ${med.periodo}, Intervalo: ${med.intervalo}'),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          const Padding(
             padding: EdgeInsets.only(bottom: 7),
             child: Center(
-              child: ButtonPage(icone: Icon(Icons.add), pagina: AddRemedioPage(), corFundo: Colors.grey, cor: Colors.white),
+              child: ButtonPage(
+                icone: Icon(Icons.add),
+                pagina: AddRemedioPage(),
+                corFundo: Colors.grey,
+                cor: Colors.white,
               ),
+            ),
           ),
-        ]
-      )
+        ],
+      ),
     );
   }
 }

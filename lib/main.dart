@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:teste_firebase/components/medicamento_hive.dart';
 import 'package:teste_firebase/pages/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:teste_firebase/routes.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(MedicamentoHiveAdapter());
+  await Hive.openBox<MedicamentoHive>('medicamentosBox');
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -16,9 +22,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AuthPage(),
+      home: const AuthPage(),
+      routes: rotas,
     );
   }
 }
