@@ -12,7 +12,7 @@ class _NovaConsultaState extends State<NovaConsulta> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppBarWidget(titulo: "Nova Consulta"),
+      appBar: const AppBarWidget(titulo: "Nova Consulta", logout: false, rota:'/consult_page'),
 
       body: Column(
         children:  [

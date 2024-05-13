@@ -63,7 +63,7 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:
-          const AppBarWidget(titulo: 'Adicionar Medicamento', logout: false),
+          const AppBarWidget(titulo: 'Adicionar Medicamento', logout: false, rota:'/remedios_page'),
       body: Column(
         children: [
           Expanded(

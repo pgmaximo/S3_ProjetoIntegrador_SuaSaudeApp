@@ -17,8 +17,9 @@ class _HistoricoPageState extends State<HistoricoPage> {
   Widget build(BuildContext context) {
     return  Scaffold(
       appBar: const AppBarWidget(
-        titulo: "Histórico de exames"
-      
+        titulo: "Histórico de exames",
+        logout: false,
+        rota: '/home',
       ),
       body: Center(
         child: Column(

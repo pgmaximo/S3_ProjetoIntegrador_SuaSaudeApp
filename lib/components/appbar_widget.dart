@@ -3,10 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 //App bar com o botão para o logout a ultima tela
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
+  final String rota;
   final String titulo;
   final bool logout;
   /*FALSE (padrão) = Botão para voltar pagina | TRUE = Botão para logout*/
-  const AppBarWidget({super.key, required this.titulo, this.logout = false});
+  const AppBarWidget({super.key, required this.titulo, this.logout = false, required this.rota});
 
   // sign user out
   void signUserOut() {
@@ -25,7 +26,7 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       automaticallyImplyLeading: false,
       leading: IconButton(
-        onPressed: logout ? signUserOut : () => Navigator.pop(context),
+        onPressed: logout ? signUserOut : () => Navigator.pushNamed(context, rota),
         icon: Icon(logout ? Icons.logout : Icons.arrow_back, color: Colors.white, ),
         style: const ButtonStyle(alignment: Alignment.center),
       ),

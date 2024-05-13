@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:teste_firebase/components/appbar_widget.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -17,6 +18,7 @@ class HomePage extends StatelessWidget {
       appBar: const AppBarWidget(
         titulo: "Home Page",
         logout: true,
+        rota: "",
       ),
       body: Center(
         child: Column(

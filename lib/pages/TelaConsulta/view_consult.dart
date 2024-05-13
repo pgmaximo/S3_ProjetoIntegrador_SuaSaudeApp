@@ -12,7 +12,7 @@ class _ConsultaStateMarcadas extends State<ConsultaMarcadas> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: AppBarWidget(titulo: 'Consultas Marcadas'),
+      appBar: AppBarWidget(titulo: 'Consultas Marcadas', logout:false, rota: '/consult_page'),
 
       body: Center(),
     );
