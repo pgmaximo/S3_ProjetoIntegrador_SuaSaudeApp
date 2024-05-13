@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatelessWidget {

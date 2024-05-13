@@ -3,8 +3,8 @@ import 'pages/home_page.dart';
 import 'package:teste_firebase/pages/TelaConsulta/new_consult.dart';
 import 'package:teste_firebase/pages/TelaConsulta/view_consult.dart';
 import 'package:teste_firebase/pages/TelaConsulta/category_consult.dart';
-import 'package:teste_firebase/pages/register_page.dart';
-import 'package:teste_firebase/pages/remedios_page.dart';
+import 'package:teste_firebase/pages/TelaCadastro/register_page.dart';
+import 'package:teste_firebase/pages/TelaMedicamento/remedios_page.dart';
 
 
 Map<String, Widget Function(BuildContext context)> rotas = {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/page_button.dart';
-import 'package:teste_firebase/pages/add_remedio_page.dart';
+import 'package:teste_firebase/pages/TelaMedicamento/add_remedio_page.dart';
 import 'package:teste_firebase/components/medicamento_hive.dart'; // Certifique-se de importar a classe Medicamento
 
 class RemediosPage extends StatelessWidget {

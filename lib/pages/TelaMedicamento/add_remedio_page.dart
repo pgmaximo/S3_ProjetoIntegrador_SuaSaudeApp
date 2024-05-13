@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/medicamento_hive.dart';
-import 'package:teste_firebase/pages/remedios_page.dart';
+import 'package:teste_firebase/pages/TelaMedicamento/remedios_page.dart';
 import 'package:teste_firebase/services/medicamento_service.dart';
 
 class AddRemedioPage extends StatefulWidget {
@@ -19,9 +19,7 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
   List<String> nomeMedicamentoFiltrado = [];
   TextEditingController controleBusca = TextEditingController();
 
-  List<String> horas = List.generate(
-      48,
-      (index) =>
+  List<String> horas = List.generate(48,(index) =>
           "${index ~/ 2}:${(index % 2 * 30).toString().padLeft(2, '0')}");
   List<String> periodos = List.generate(30, (index) => '${index + 1} dias');
   List<String> intervalos = List.generate(24, (index) => '${index + 1}h');
