@@ -14,17 +14,36 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(onPressed: signUserOut, icon: const Icon(Icons.logout)),
+      appBar: const AppBarWidget(
+        titulo: "Home Page",
+        logout: true,
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            Text(
+              "logado como: ${user.email!}",
+              // "logado como: " + user.email!,
+              style: const TextStyle(fontSize: 20),
+            ),
+            const SizedBox(height: 20),
+            // TESTE DE PAGINGA! FAVOR APAGAR QUANDO FOR FAZER A HOMEPAGE
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/consult_page');
+              }, 
+              child: const Text('Pagina de consulta')
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/remedios_page');
+              }, 
+              child: const Text('Pagina de remedio')
+            )
           ],
         ),
-        body: Center(
-          child: Text(
-            "logado como: ${user.email!}",
-            // "logado como: " + user.email!,
-            style: const TextStyle(fontSize: 20),
-          ),
-        ));
+      )
+    );
   }
 }
