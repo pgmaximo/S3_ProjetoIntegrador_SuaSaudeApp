@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 
-class ConsultPage extends StatefulWidget {
-  const ConsultPage({super.key});
+class SpecialtyConsulta extends StatefulWidget {
+  const SpecialtyConsulta({super.key});
 
   @override
-  State<ConsultPage> createState() => _ConsultPageState();
+  State<SpecialtyConsulta> createState() => _ConsultPageState();
 }
 
-class _ConsultPageState extends State<ConsultPage> {
+class _ConsultPageState extends State<SpecialtyConsulta> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,6 +19,7 @@ class _ConsultPageState extends State<ConsultPage> {
       body: const SingleChildScrollView(
         child: Column(
           children: [
+            // PRECISA ADICIONAR SISTEMA DE ADIÇÃO DE MAIS BOTOES DE CATEGARIAS
             BotaoCategoriaConsulta()
           ],
         ),
