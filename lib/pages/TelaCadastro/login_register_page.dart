@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:teste_firebase/pages/login_page.dart';
-import 'package:teste_firebase/pages/register_page.dart';
+import 'package:teste_firebase/pages/TelaCadastro/login_page.dart';
+import 'package:teste_firebase/pages/TelaCadastro/register_page.dart';
 
 class LoginRegisterPage extends StatefulWidget {
   const LoginRegisterPage({super.key});

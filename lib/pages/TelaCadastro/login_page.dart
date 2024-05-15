@@ -73,20 +73,9 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               const SizedBox(height: 50),
 
-              //logo
-              // const Icon(
-              //   Icons.lock,
-              //   size: 100,
-              // )
-              
               // texto placeholder, mudar pra um logo depois
-              const Text (
-                "YE Gestão de Saúde",
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold
-                )
-              ),
+              const Text("YE Gestão de Saúde",
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
 
               const SizedBox(height: 50),
 
@@ -97,13 +86,13 @@ class _LoginPageState extends State<LoginPage> {
                     fontSize: 16,
                   )),
 
-              
               const SizedBox(
                 height: 25,
               ),
 
               //user textfield
               MyTextField(
+                key: const Key("userfield"),
                 controller: emailController,
                 hintText: "email",
                 obscureText: false,
@@ -113,6 +102,7 @@ class _LoginPageState extends State<LoginPage> {
 
               //pass textfield
               MyTextField(
+                key: const Key("passfield"),
                 controller: passwordController,
                 hintText: "password",
                 obscureText: true,
@@ -137,7 +127,11 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 25),
 
               //botao login
-              MyButton(onTap: signUserIn, text: "Login"),
+              MyButton(
+                  key: const Key("botaologin"),
+                  onTap: signUserIn,
+                  text: "Login"
+                ),
 
               const SizedBox(height: 25),
 
@@ -177,12 +171,14 @@ class _LoginPageState extends State<LoginPage> {
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 //google
                 SquareTile(
+                  key: const Key("logingoogle"),
                     onTap: () => AuthService().signInWithGoogle(),
                     imgPath: "lib/images/google_logo.png"),
 
                 const SizedBox(width: 25),
 
                 SquareTile(
+                  key: const Key("loginfacebook"),
                   onTap: () => {},
                   imgPath: "lib/images/facebook_logo.png",
                 )
@@ -200,6 +196,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(width: 4),
                   GestureDetector(
+                    key: const Key("cadastrese"),
                     onTap: widget.onTap,
                     child: const Text("Cadastre-se agora",
                         style: TextStyle(

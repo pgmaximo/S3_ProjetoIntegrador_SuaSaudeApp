@@ -13,7 +13,9 @@ class _ConsultPageState extends State<SpecialtyConsulta> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const AppBarWidget(
-        titulo: 'Consultas Realizadas', 
+        titulo: 'Consultas Realizadas',
+        logout: false,
+        rota: '/home',
       ),
 
       body: const SingleChildScrollView(

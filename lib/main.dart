@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:teste_firebase/components/medicamento_hive.dart';
-import 'package:teste_firebase/pages/auth_page.dart';
+import 'package:teste_firebase/pages/TelaCadastro/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:teste_firebase/routes.dart';
 import 'firebase_options.dart';
@@ -16,7 +16,6 @@ void main() async {
   );
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
