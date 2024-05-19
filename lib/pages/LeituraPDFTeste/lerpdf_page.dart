@@ -47,8 +47,8 @@ class LerPdfPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("ler pdf"),
+      appBar: const AppBarWidget(
+        titulo: "ler pdf", rota: '/home',
       ),
       body: Center(
         child: Column(
