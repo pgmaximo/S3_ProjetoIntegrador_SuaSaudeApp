@@ -26,7 +26,7 @@ class HomePage extends StatelessWidget {
               // TESTE DE PAGINGA! FAVOR APAGAR QUANDO FOR FAZER A HOMEPAGE
               ElevatedButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/consult_page');
+                    Navigator.pushNamed(context, '/specialty_consulta');
                   },
                   child: const Text('Pagina de consulta')),
               const SizedBox(height: 20),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:teste_firebase/components/consulta_hive.dart';
 import 'package:teste_firebase/components/medicamento_hive.dart';
 import 'package:teste_firebase/pages/TelaCadastro/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,8 +10,17 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
+
+  // Remedio
   Hive.registerAdapter(MedicamentoHiveAdapter());
   await Hive.openBox<MedicamentoHive>('medicamentosBox');
+
+  // Consulta
+  Hive.registerAdapter(ConsultaHiveAdapter());
+  await Hive.openBox<ConsultaHive>('consultasBox'); 
+
+
+  
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
