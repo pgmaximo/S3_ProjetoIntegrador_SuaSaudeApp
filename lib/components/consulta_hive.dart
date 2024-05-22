@@ -15,10 +15,10 @@ class ConsultaHive extends HiveObject {
   @HiveField(3)
   String descricao;
 
-  @HiveField(4) // Novo campo
-  String? retorno;
+  @HiveField(4)
+  DateTime? retorno;
 
-  @HiveField(5) // Novo campo
+  @HiveField(5)
   String? lembrete;
 
   ConsultaHive({
