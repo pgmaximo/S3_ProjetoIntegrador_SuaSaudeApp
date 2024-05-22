@@ -89,16 +89,25 @@ class UsuarioService {
   }
 
   Stream<String> getAltura(String documentId) {
+    // Stream<String> alturaStream = getAltura(documentId).map((alturaString) {
+    //   alturaString = alturaString.replaceAll('m', '');
+    //   double? altura = double.tryParse(alturaString);
+    //   if (altura == null || altura <= 0) {
+    //     throw Exception('Altura inválida');
+    //   }
+    //   //transformar cm para m
+    //   return (altura/100).toString();
+    // });
+    
   return _db
       .collection('Usuarios')
       .doc(documentId)
       .snapshots()
       .map((snapshot) {
-        final alturaCm = snapshot.data()?['altura'] as int?;
-        if (alturaCm == null) {
-          return 'Altura não disponível';
-        }
-        final alturaM = alturaCm / 100;
+        String alturaCm = snapshot.data()?['altura'] as String;
+        alturaCm = alturaCm.replaceAll('m', '');
+        double? altura = double.tryParse(alturaCm);
+        final alturaM = altura! / 100;
         return '${alturaM.toStringAsFixed(2)}m';
       });
 }
@@ -129,8 +138,7 @@ class UsuarioService {
       if (altura == null || altura <= 0) {
         throw Exception('Altura inválida');
       }
-      //transformar cm para m
-      return altura/100;
+      return altura;
     });
 
     Stream<double> pesoStream = getPeso(documentId).map((pesoString) {

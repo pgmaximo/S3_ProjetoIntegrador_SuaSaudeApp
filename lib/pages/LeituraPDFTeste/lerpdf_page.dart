@@ -25,7 +25,7 @@ class LerPdfPage extends StatelessWidget {
 
     //procura no pdf exatamente o texto que estiver inserido na string procuraTexto e pega o indice
     //texto a procurar
-    String procuraTexto = "actate, venous blood";
+    String procuraTexto = "Hydroxycorticosteroids (Porter-Silber), urine";
     int index = text.indexOf(procuraTexto);
     // debugPrint('index = $index');
 
@@ -38,7 +38,7 @@ class LerPdfPage extends StatelessWidget {
     // pega a substring que vai do \n após o encontrado até o proximo \n
     String substring = text.substring(index + procuraTexto.length + 2, indexln);
     debugPrint(
-        'text.substring(index, index + procuraTexto.length + 2) = $substring');
+        'Hydroxycorticosteroids (Porter-Silber), urine = $substring');
 
     // apaga o documento
     document.dispose();
