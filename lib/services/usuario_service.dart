@@ -24,6 +24,14 @@ class UsuarioService {
         .set({'pressao': pressao}, SetOptions(merge: true));
   }
 
+  Future<void> setNome(String nome) async {
+    final user = FirebaseAuth.instance.currentUser!;
+    await _db
+        .collection('Usuarios')
+        .doc(user.email)
+        .set({'nome': nome}, SetOptions(merge: true));
+  }
+
   Future<void> setGlicemia(String glicemia) async {
     final user = FirebaseAuth.instance.currentUser!;
     await _db
@@ -64,6 +72,14 @@ class UsuarioService {
         .map((snapshot) => snapshot.data()?['pressao'] as String);
   }
 
+  Stream<String> getNome(String documentID) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentID)
+        .snapshots()
+        .map((snapshot) => snapshot.data()?['nome'] as String);
+  }
+
   Stream<String> getGlicemia(String documentId) {
     return _db
         .collection('Usuarios')
@@ -73,12 +89,29 @@ class UsuarioService {
   }
 
   Stream<String> getAltura(String documentId) {
-    return _db
-        .collection('Usuarios')
-        .doc(documentId)
-        .snapshots()
-        .map((snapshot) => '${snapshot.data()?['altura'] as String}m');
-  }
+    // Stream<String> alturaStream = getAltura(documentId).map((alturaString) {
+    //   alturaString = alturaString.replaceAll('m', '');
+    //   double? altura = double.tryParse(alturaString);
+    //   if (altura == null || altura <= 0) {
+    //     throw Exception('Altura inválida');
+    //   }
+    //   //transformar cm para m
+    //   return (altura/100).toString();
+    // });
+    
+  return _db
+      .collection('Usuarios')
+      .doc(documentId)
+      .snapshots()
+      .map((snapshot) {
+        String alturaCm = snapshot.data()?['altura'] as String;
+        alturaCm = alturaCm.replaceAll('m', '');
+        double? altura = double.tryParse(alturaCm);
+        final alturaM = altura! / 100;
+        return '${alturaM.toStringAsFixed(2)}m';
+      });
+}
+
 
   Stream<String> getPeso(String documentId) {
     return _db

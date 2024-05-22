@@ -15,66 +15,6 @@ class _HomePageState extends State<HomePage> {
   final UsuarioService usuarioService = UsuarioService();
   final user = FirebaseAuth.instance.currentUser!;
 
-  Future<void> _showPesoAlturaInputDialog() async {
-    TextEditingController pesoController = TextEditingController();
-    TextEditingController alturaController = TextEditingController();
-
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Inserir Peso e Altura'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: pesoController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  hintText: "Digite seu peso em kg",
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: alturaController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  hintText: "Digite sua altura em metros",
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                double? peso = double.tryParse(pesoController.text);
-                String altura = alturaController.text;
-
-                if (peso != null) {
-                  await usuarioService.setPesoAltura(altura, peso);
-                  Navigator.of(context).pop();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text(
-                            'Por favor, insira valores válidos para peso e altura.')),
-                  );
-                }
-              },
-              child: Text('Salvar'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancelar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,11 +32,24 @@ class _HomePageState extends State<HomePage> {
                 height: 50,
               ),
 
-              //Text sera substituido por um texto que mostre o nome nao email
-              Text(
-                "logado como: ${user.email!}",
-                style: const TextStyle(fontSize: 20),
-              ),
+              //Texto bem vindo com nome do usuario
+              StreamBuilder<String>(
+              stream: usuarioService.getNome(user.email!),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData) {
+                  return const Text('No data');
+                } else {
+                  return Text(
+                    "Bem vindo: ${snapshot.data}",
+                    style: const TextStyle(fontSize: 20),
+                  );
+                }
+              },
+            ),
 
               const SizedBox(height: 50),
 

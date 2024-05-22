@@ -3,7 +3,7 @@ import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/itens_lista.dart';
 
 class HistoricoPage extends StatefulWidget {
-   const HistoricoPage({super.key});
+  const HistoricoPage({super.key});
 
   @override
   State<HistoricoPage> createState() => _HistoricoPageState();
@@ -11,7 +11,7 @@ class HistoricoPage extends StatefulWidget {
 
 class _HistoricoPageState extends State<HistoricoPage> {
   List<int> contador = [];
-  List<ItemLista> items = []; // Use 'ItemLista' instead of 'Widget'
+  List<ItemLista> items = []; 
 
   @override
   Widget build(BuildContext context) {

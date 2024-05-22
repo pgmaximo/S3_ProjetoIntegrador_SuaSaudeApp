@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/medicamento_hive.dart';
 import 'package:teste_firebase/pages/TelaMedicamento/remedios_page.dart';
@@ -116,9 +117,8 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
                     const SizedBox(height: 20),
                     ListTile(
                       title: Text(periodoSelec == null
-                          ? "Selecione o Período"
-                          : "Período: ${periodoSelec!.toLocal()}"
-                              .split(' ')[0]),
+                          ? "Selecione o Período "
+                          : "Período: ${DateFormat('dd/MM/yyyy').format(periodoSelec!)}"),
                       trailing: const Icon(Icons.calendar_today),
                       onTap: () async {
                         DateTime? pickedDate = await showDatePicker(
@@ -136,7 +136,7 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
                     ),
                     const SizedBox(height: 20),
                     ListTile(
-                      title: Text("Selecione o Intervalo"),
+                      title: const Text("Selecione o Intervalo"),
                       subtitle: Row(
                         children: [
                           DropdownButton<int>(
@@ -228,7 +228,7 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
         nome: medicamentoSelec ?? "Nome padrão",
         horario: horaSelec != null ? horaSelec!.format(context) : "08:00",
         periodo: periodoSelec != null
-            ? periodoSelec!.toLocal().toString().split(' ')[0]
+            ? DateFormat('dd/MM/yyyy').format(periodoSelec!)
             : "1 dia",
         intervalo: horasIntervalo != null && minutosIntervalo != null
             ? "${horasIntervalo!}h ${minutosIntervalo!}m"

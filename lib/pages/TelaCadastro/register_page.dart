@@ -6,6 +6,7 @@ import 'package:teste_firebase/components/my_button.dart';
 import 'package:teste_firebase/components/my_textfield.dart';
 import 'package:teste_firebase/components/square_tile.dart';
 import 'package:teste_firebase/services/auth_service.dart';
+import 'package:teste_firebase/services/usuario_service.dart';
 
 class RegisterPage extends StatefulWidget {
   final Function()? onTap;
@@ -17,6 +18,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   // controllers
+  final nomeController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -40,6 +42,8 @@ class _RegisterPageState extends State<RegisterPage> {
           email: emailController.text,
           password: passwordController.text,
         );
+        UsuarioService usuarioService = UsuarioService();
+        usuarioService.setNome(nomeController.text);
         //tirar loading
         Navigator.pop(context);
       } else {
@@ -79,11 +83,9 @@ class _RegisterPageState extends State<RegisterPage> {
             children: [
               const SizedBox(height: 50),
 
-              //logo
-              const Icon(
-                Icons.lock,
-                size: 50,
-              ),
+              // texto placeholder, mudar pra um logo depois
+              const Text("YE Gestão de Saúde",
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
 
               const SizedBox(height: 50),
 
@@ -96,6 +98,15 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(
                 height: 25,
               ),
+
+              //nome textfield
+              MyTextField(
+                controller: nomeController,
+                hintText: "Nome",
+                obscureText: false,
+              ),
+
+              const SizedBox(height: 25),
 
               //user textfield
               MyTextField(
