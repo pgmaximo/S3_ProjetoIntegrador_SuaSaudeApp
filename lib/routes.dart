@@ -1,5 +1,5 @@
 import 'package:teste_firebase/pages/TelaCadastro/auth_page.dart';
-
+import 'package:teste_firebase/pages/TelaDadosHome/pressao_page.dart';
 import 'pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/components/consulta_hive.dart';
@@ -17,6 +17,9 @@ Map<String, Widget Function(BuildContext context)> rotas = {
 
   // Rota para pagina de autenticaçao
   '/auth_page' : (context) => const AuthPage(),
+
+  // Rotas para pagina de pressao, glicemia, altura e peso
+  '/pressao_page' : (context) => const PressaoPage(),
 
   // Rotas para paginas de consultas
   '/specialty_consulta' : (context) => const SpecialtyConsulta(),

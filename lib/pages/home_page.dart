@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                       alignment: WrapAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(15.0),
                           child: ElevatedButton(
                               onPressed: () {
                                 Navigator.pushNamed(
@@ -118,20 +118,18 @@ class _HomePageState extends State<HomePage> {
                               },
                               child: const Text('Pagina de consulta')),
                         ),
-                        const SizedBox(height: 20),
+                        // const SizedBox(height: 20),
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(15.0),
                           child: ElevatedButton(
                               onPressed: () {
                                 Navigator.pushNamed(context, '/remedios_page');
                               },
                               child: const Text('Pagina de remedio')),
                         ),
-                        const SizedBox(
-                          height: 50,
-                        ),
+                        // const SizedBox(height: 50,),
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(15.0),
                           child: ElevatedButton(
                               onPressed: () {
                                 Navigator.pushNamed(context, '/lerpdf_page');

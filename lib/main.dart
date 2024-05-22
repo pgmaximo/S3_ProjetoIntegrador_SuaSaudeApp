@@ -18,8 +18,6 @@ void main() async {
   // Consulta
   Hive.registerAdapter(ConsultaHiveAdapter());
   await Hive.openBox<ConsultaHive>('consultasBox'); 
-
-
   
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
