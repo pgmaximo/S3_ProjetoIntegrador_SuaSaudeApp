@@ -43,7 +43,6 @@ class _ConsultaPageState extends State<SpecialtyConsulta> {
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => const NovaConsulta()));
           },
-          elevation: 0,
           shape: const CircleBorder(),
           child: const Icon(Icons.add, color: Colors.black),
         ),
