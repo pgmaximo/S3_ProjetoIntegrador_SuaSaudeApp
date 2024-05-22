@@ -19,14 +19,10 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
   List<String> nomeMedicamentoFiltrado = [];
   TextEditingController controleBusca = TextEditingController();
 
-  List<String> horas = List.generate(48,(index) =>
-          "${index ~/ 2}:${(index % 2 * 30).toString().padLeft(2, '0')}");
-  List<String> periodos = List.generate(30, (index) => '${index + 1} dias');
-  List<String> intervalos = List.generate(24, (index) => '${index + 1}h');
-
-  String? horaSelec;
-  String? periodoSelec;
-  String? intervaloSelec;
+  TimeOfDay? horaSelec;
+  DateTime? periodoSelec;
+  int? horasIntervalo;
+  int? minutosIntervalo;
 
   @override
   void initState() {
@@ -62,8 +58,10 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          const AppBarWidget(titulo: 'Adicionar Medicamento', logout: false, rota:'/remedios_page'),
+      appBar: const AppBarWidget(
+          titulo: 'Adicionar Medicamento',
+          logout: false,
+          rota: '/remedios_page'),
       body: Column(
         children: [
           Expanded(
@@ -79,6 +77,7 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
                         suffixIcon: Icon(Icons.search),
                       ),
                     ),
+                    const SizedBox(height: 20),
                     DropdownButton<String>(
                       value: medicamentoSelec,
                       hint: const Text("Selecione um Medicamento"),
@@ -96,9 +95,87 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
                         );
                       }).toList(),
                     ),
-                    buildDropdown("Horário", horaSelec, horas),
-                    buildDropdown("Período", periodoSelec, periodos),
-                    buildDropdown("Intervalo", intervaloSelec, intervalos),
+                    const SizedBox(height: 20),
+                    ListTile(
+                      title: Text(horaSelec == null
+                          ? "Selecione o Horário"
+                          : "Horário: ${horaSelec!.format(context)}"),
+                      trailing: const Icon(Icons.access_time),
+                      onTap: () async {
+                        TimeOfDay? pickedTime = await showTimePicker(
+                          context: context,
+                          initialTime: horaSelec ?? TimeOfDay.now(),
+                        );
+                        if (pickedTime != null) {
+                          setState(() {
+                            horaSelec = pickedTime;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    ListTile(
+                      title: Text(periodoSelec == null
+                          ? "Selecione o Período"
+                          : "Período: ${periodoSelec!.toLocal()}"
+                              .split(' ')[0]),
+                      trailing: const Icon(Icons.calendar_today),
+                      onTap: () async {
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: periodoSelec ?? DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            periodoSelec = pickedDate;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    ListTile(
+                      title: Text("Selecione o Intervalo"),
+                      subtitle: Row(
+                        children: [
+                          DropdownButton<int>(
+                            value: horasIntervalo,
+                            hint: const Text("Horas"),
+                            items: List.generate(24, (index) => index)
+                                .map((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Text(value.toString()),
+                              );
+                            }).toList(),
+                            onChanged: (newValue) {
+                              setState(() {
+                                horasIntervalo = newValue;
+                              });
+                            },
+                          ),
+                          const Text("  horas   "),
+                          DropdownButton<int>(
+                            value: minutosIntervalo,
+                            hint: const Text("Minutos"),
+                            items: List.generate(60, (index) => index)
+                                .map((int value) {
+                              return DropdownMenuItem<int>(
+                                value: value,
+                                child: Text(value.toString()),
+                              );
+                            }).toList(),
+                            onChanged: (newValue) {
+                              setState(() {
+                                minutosIntervalo = newValue;
+                              });
+                            },
+                          ),
+                          const Text("  minutos"),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -149,45 +226,17 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
     final box = Hive.box<MedicamentoHive>('medicamentosBox');
     final novoMedicamento = MedicamentoHive(
         nome: medicamentoSelec ?? "Nome padrão",
-        horario: horaSelec ?? "08:00",
-        periodo: periodoSelec ?? "1 dia",
-        intervalo: intervaloSelec ?? "1h");
+        horario: horaSelec != null ? horaSelec!.format(context) : "08:00",
+        periodo: periodoSelec != null
+            ? periodoSelec!.toLocal().toString().split(' ')[0]
+            : "1 dia",
+        intervalo: horasIntervalo != null && minutosIntervalo != null
+            ? "${horasIntervalo!}h ${minutosIntervalo!}m"
+            : "1h");
     await box.add(novoMedicamento);
 
     // Opcional: Mostra um snackbar ou outro feedback
     ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Medicamento salvo com sucesso!")));
-  }
-
-  Widget buildDropdown(String title, String? value, List<String> options) {
-    return ListTile(
-      title: DropdownButton<String>(
-        value: value,
-        hint: Text(title),
-        isExpanded: true,
-        onChanged: (String? newValue) {
-          setState(() {
-            switch (title) {
-              case "Horário":
-                horaSelec = newValue;
-                break;
-              case "Período":
-                periodoSelec = newValue;
-                break;
-              case "Intervalo":
-                intervaloSelec = newValue;
-                break;
-              default:
-            }
-          });
-        },
-        items: options.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-      ),
-    );
   }
 }
