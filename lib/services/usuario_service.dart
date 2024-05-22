@@ -64,13 +64,33 @@ class UsuarioService {
   Future<void> setListaPressao(String documentId, String pressao) async {
     DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
 
-    // Adiciona a entrada de pressão com DateTime.now()
+    // Função para classificar a pressão
+    String classifyPressao(String pressao) {
+      final parts = pressao.split('/');
+      if (parts.length != 2) return 'Desconhecida';
+
+      final sistolica = int.tryParse(parts[0]);
+      final diastolica = int.tryParse(parts[1]);
+
+      if (sistolica == null || diastolica == null) return 'Desconhecida';
+
+      if (sistolica < 90 || diastolica < 60) return 'Pressao baixa';
+      if (sistolica < 120 && diastolica < 80) return 'Ótima';
+      if (sistolica < 130 && diastolica < 85) return 'Normal';
+      if (sistolica < 140 && diastolica < 90) return 'Atenção';
+      return 'Alta';
+    }
+
+    final classification = classifyPressao(pressao);
+
+    // Adiciona a entrada de pressão com DateTime.now() e classificação
     await docRef.update({
       'pressao': FieldValue.arrayUnion([
         {
           'pressao': pressao,
           'timestamp':
               DateTime.now().toIso8601String(), // Adiciona o timestamp local
+          'classification': classification,
         }
       ])
     });
@@ -116,13 +136,26 @@ class UsuarioService {
         .set({'peso': peso}, SetOptions(merge: true));
   }
 
-  // Stream<String> getPressao(String documentID) {
-  //   return _db
-  //       .collection('Usuarios')
-  //       .doc(documentID)
-  //       .snapshots()
-  //       .map((snapshot) => snapshot.data()?['pressao'] as String);
-  // }
+  Stream<String> getUltimaPressao(String documentID) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentID)
+        .snapshots()
+        .map((snapshot) {
+      List<dynamic> pressoes = snapshot.data()?['pressao'];
+
+      if (pressoes.isNotEmpty) {
+        pressoes.sort((a, b) {
+          DateTime timeA = DateTime.parse(a['timestamp']);
+          DateTime timeB = DateTime.parse(b['timestamp']);
+          return timeB.compareTo(timeA);
+        });
+        return "${pressoes.first['pressao'] as String}\n${pressoes.first['classification']}";
+      } else {
+        return "sem dados";
+      }
+    });
+  }
 
   Stream<String> getPressao(String documentID) {
     return _db
@@ -150,6 +183,34 @@ class UsuarioService {
     });
   }
 
+  Stream<List<Map<String, dynamic>>> getListaPressao(String documentId) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentId)
+        .snapshots()
+        .map((snapshot) {
+      var data = snapshot.data() as Map<String, dynamic>;
+      var pressaoList = data['pressao'] as List<dynamic>?;
+
+      if (pressaoList == null) return [];
+
+      // Ordena a lista de pressões do mais recente para o mais antigo
+      pressaoList.sort((a, b) {
+        DateTime timestampA = DateTime.parse(a['timestamp']);
+        DateTime timestampB = DateTime.parse(b['timestamp']);
+        return timestampB.compareTo(timestampA); // Inverte a comparação
+      });
+
+      return pressaoList.map((pressaoEntry) {
+        return {
+          'pressao': pressaoEntry['pressao'],
+          'timestamp': DateTime.parse(pressaoEntry['timestamp']),
+          'classification': pressaoEntry['classification'],
+        };
+      }).toList();
+    });
+  }
+
   // Stream<List<Map<String, dynamic>>> getListaPressao(String documentID) {
   //   return _db
   //       .collection('Usuarios')
@@ -174,70 +235,46 @@ class UsuarioService {
   //       entry['timestamp'] = (entry['timestamp'] as DateTime).toIso8601String();
   //     });
 
+  //     // Classify blood pressure readings
+  //     pressaoList.forEach((entry) {
+  //       var pressao = entry['pressao'] as String;
+  //       var parts = pressao.split('/');
+  //       var sistolico = int.parse(parts[0]);
+  //       var diastolico = int.parse(parts[1]);
+
+  //       if (sistolico < 90 && diastolico < 60) {
+  //         entry['classificacao'] = 'Pressao baixa';
+  //       } else if (sistolico >= 90 &&
+  //           sistolico <= 120 &&
+  //           diastolico >= 60 &&
+  //           diastolico <= 80) {
+  //         entry['classificacao'] = 'Ótima';
+  //       } else if (sistolico > 120 &&
+  //           sistolico <= 129 &&
+  //           diastolico > 80 &&
+  //           diastolico <= 84) {
+  //         entry['classificacao'] = 'Normal';
+  //       } else if (sistolico >= 130 &&
+  //           sistolico <= 139 &&
+  //           diastolico >= 85 &&
+  //           diastolico <= 89) {
+  //         entry['classificacao'] = 'Atenção';
+  //       } else if (sistolico >= 140 && diastolico >= 90) {
+  //         entry['classificacao'] = 'Alta';
+  //       } else {
+  //         entry['classificacao'] = 'Desconhecido';
+  //       }
+  //     });
+
   //     return pressaoList.map((pressaoEntry) {
   //       return {
   //         'pressao': pressaoEntry['pressao'],
   //         'timestamp': pressaoEntry['timestamp'],
+  //         'classificacao': pressaoEntry['classificacao'],
   //       };
   //     }).toList();
   //   });
   // }
-
-  Stream<List<Map<String, dynamic>>> getListaPressao(String documentID) {
-  return _db
-      .collection('Usuarios')
-      .doc(documentID)
-      .snapshots()
-      .map((snapshot) {
-    var data = snapshot.data() as Map<String, dynamic>;
-    var pressaoList = data['pressao'] as List<dynamic>?;
-    if (pressaoList == null) return [];
-
-    // Convert timestamp strings to DateTime objects
-    pressaoList.forEach((entry) {
-      entry['timestamp'] = DateTime.parse(entry['timestamp']);
-    });
-
-    // Sort the list by timestamp in descending order
-    pressaoList.sort((a, b) => (b['timestamp'] as DateTime).compareTo(a['timestamp'] as DateTime));
-
-    // Convert timestamp back to string (if needed)
-    pressaoList.forEach((entry) {
-      entry['timestamp'] = (entry['timestamp'] as DateTime).toIso8601String();
-    });
-
-    // Classify blood pressure readings
-    pressaoList.forEach((entry) {
-      var pressao = entry['pressao'] as String;
-      var parts = pressao.split('/');
-      var sistolico = int.parse(parts[0]);
-      var diastolico = int.parse(parts[1]);
-
-      if (sistolico < 90 && diastolico < 60) {
-        entry['classificacao'] = 'Pressao baixa';
-      } else if (sistolico >= 90 && sistolico <= 120 && diastolico >= 60 && diastolico <= 80) {
-        entry['classificacao'] = 'Ótima';
-      } else if (sistolico > 120 && sistolico <= 129 && diastolico > 80 && diastolico <= 84) {
-        entry['classificacao'] = 'Normal';
-      } else if (sistolico >= 130 && sistolico <= 139 && diastolico >= 85 && diastolico <= 89) {
-        entry['classificacao'] = 'Atenção';
-      } else if (sistolico >= 140 && diastolico >= 90) {
-        entry['classificacao'] = 'Alta';
-      } else {
-        entry['classificacao'] = 'Desconhecido';
-      }
-    });
-
-    return pressaoList.map((pressaoEntry) {
-      return {
-        'pressao': pressaoEntry['pressao'],
-        'timestamp': pressaoEntry['timestamp'],
-        'classificacao': pressaoEntry['classificacao'],
-      };
-    }).toList();
-  });
-}
-
 
   Stream<String> getNome(String documentID) {
     return _db

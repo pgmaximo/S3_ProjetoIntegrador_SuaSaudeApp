@@ -15,21 +15,21 @@ class _PressaoPageState extends State<PressaoPage> {
   final user = FirebaseAuth.instance.currentUser!;
 
   Color _getClassificationColor(String classification) {
-  switch (classification) {
-    case 'Pressao baixa':
-      return Colors.blue;
-    case 'Ótima':
-      return const Color.fromARGB(255, 0, 252, 8);
-    case 'Normal':
-      return Colors.green;
-    case 'Atenção':
-      return Colors.orange;
-    case 'Alta':
-      return Colors.red;
-    default:
-      return Colors.black;
+    switch (classification) {
+      case 'Pressao baixa':
+        return Colors.blue;
+      case 'Ótima':
+        return const Color.fromARGB(255, 0, 252, 8);
+      case 'Normal':
+        return Colors.green;
+      case 'Atenção':
+        return Colors.orange;
+      case 'Alta':
+        return Colors.red;
+      default:
+        return Colors.black;
+    }
   }
-}
 
   Future<void> _addPressao() async {
     TextEditingController controller = TextEditingController();
@@ -67,62 +67,63 @@ class _PressaoPageState extends State<PressaoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const AppBarWidget(titulo: 'Aferições de Pressão', rota: '/home'),
-      body: StreamBuilder<List<Map<String, dynamic>>>(
-        stream: usuarioService.getListaPressao(user.email!),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return const Center(child: Text('Erro ao carregar dados'));
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-                child: Text('Nenhuma aferição de pressão encontrada'));
-          }
-
-          List<Map<String, dynamic>> pressaoList = snapshot.data!;
-
-          return ListView.builder(
-            itemCount: pressaoList.length,
-            itemBuilder: (context, index) {
-              var pressaoData = pressaoList[index];
-              return Card(
-                margin: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  title: Text(
-                    'Pressão: ${pressaoData['pressao']}',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    'Timestamp: ${pressaoData['timestamp']}',
-                  ),
-                  trailing: Text(
-                    'Classificação: ${pressaoData['classification']}',
-                    style: TextStyle(
-                      color: _getClassificationColor(
-                          pressaoData['classification']),
-                      fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      child: Scaffold(
+        appBar: const AppBarWidget(titulo: 'Aferições de Pressão', rota: '/home'),
+        body: StreamBuilder<List<Map<String, dynamic>>>(
+          stream: usuarioService.getListaPressao(user.email!),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return const Center(child: Text('Erro ao carregar dados'));
+            }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                  child: Text('Nenhuma aferição de pressão encontrada'));
+            }
+      
+            List<Map<String, dynamic>> pressaoList = snapshot.data!;
+      
+            return ListView.builder(
+              itemCount: pressaoList.length,
+              itemBuilder: (context, index) {
+                var pressaoData = pressaoList[index];
+                return Card(
+                  margin: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    title: Text(
+                      'Pressão: ${pressaoData['pressao']}',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      'Data: ${pressaoData['timestamp']}',
+                    ),
+                    trailing: Text(
+                      'Classificação: ${pressaoData['classification']}',
+                      style: const TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(24),
-        child: FloatingActionButton(
-          onPressed: () {
-            _addPressao();
+                );
+              },
+            );
           },
-          elevation: 0,
-          shape: const CircleBorder(),
-          child: const Icon(Icons.add, color: Colors.black),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(24),
+          child: FloatingActionButton(
+            onPressed: () {
+              _addPressao();
+            },
+            elevation: 0,
+            shape: const CircleBorder(),
+            child: const Icon(Icons.add, color: Colors.black),
+          ),
         ),
       ),
     );

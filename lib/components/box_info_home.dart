@@ -94,12 +94,11 @@ class _BoxInfoState extends State<BoxInfo> {
   Stream<String> _getCampoStream(String documentId, String campo) {
     switch (campo) {
       case 'pressao':
-        return usuarioService.getPressao(documentId);
+        return usuarioService.getUltimaPressao(documentId);
       case 'glicemia':
         return usuarioService.getGlicemia(documentId);
       case 'altura':
         return usuarioService.getPesoAltura(documentId);
-      // return usuarioService.getAltura(documentId);
       case 'IMC':
         return usuarioService.getIMC(documentId);
       default:
