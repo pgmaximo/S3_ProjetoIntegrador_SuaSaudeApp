@@ -39,7 +39,7 @@ class _BoxInfoState extends State<BoxInfo> {
                     controller: pesoController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      hintText: "Digite seu peso em kg",
+                      hintText: "Peso em kg",
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -47,7 +47,7 @@ class _BoxInfoState extends State<BoxInfo> {
                     controller: alturaController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                      hintText: "Digite sua altura em metros",
+                      hintText: "Altura em cm",
                     ),
                   ),
                 ],
@@ -87,7 +87,7 @@ class _BoxInfoState extends State<BoxInfo> {
                 controller: controller,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                    hintText: "Digite sua pressao (por exemplo, 12/8)"),
+                    hintText: "Pressao (exemplo 12/8)"),
               ),
               actions: [
                 TextButton(
@@ -114,7 +114,7 @@ class _BoxInfoState extends State<BoxInfo> {
                 controller: controller,
                 keyboardType: TextInputType.number,
                 decoration:
-                    const InputDecoration(hintText: "Digite sua glicemia"),
+                    const InputDecoration(hintText: "Glicemia"),
               ),
               actions: [
                 TextButton(

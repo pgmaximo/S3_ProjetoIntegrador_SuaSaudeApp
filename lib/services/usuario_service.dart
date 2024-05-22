@@ -89,12 +89,20 @@ class UsuarioService {
   }
 
   Stream<String> getAltura(String documentId) {
-    return _db
-        .collection('Usuarios')
-        .doc(documentId)
-        .snapshots()
-        .map((snapshot) => '${snapshot.data()?['altura'] as String}m');
-  }
+  return _db
+      .collection('Usuarios')
+      .doc(documentId)
+      .snapshots()
+      .map((snapshot) {
+        final alturaCm = snapshot.data()?['altura'] as int?;
+        if (alturaCm == null) {
+          return 'Altura não disponível';
+        }
+        final alturaM = alturaCm / 100;
+        return '${alturaM.toStringAsFixed(2)}m';
+      });
+}
+
 
   Stream<String> getPeso(String documentId) {
     return _db
@@ -121,7 +129,8 @@ class UsuarioService {
       if (altura == null || altura <= 0) {
         throw Exception('Altura inválida');
       }
-      return altura;
+      //transformar cm para m
+      return altura/100;
     });
 
     Stream<double> pesoStream = getPeso(documentId).map((pesoString) {
