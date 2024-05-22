@@ -1,4 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/services/usuario_service.dart';
 
@@ -68,13 +69,13 @@ class _BoxInfoState extends State<BoxInfo> {
                       );
                     }
                   },
-                  child: Text('Salvar'),
+                  child: const Text('Salvar'),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Cancelar'),
+                  child: const Text('Cancelar'),
                 ),
               ],
             );
@@ -95,13 +96,13 @@ class _BoxInfoState extends State<BoxInfo> {
                     await usuarioService.setPressao(pressao);
                     Navigator.of(context).pop();
                   },
-                  child: Text('Salvar'),
+                  child: const Text('Salvar'),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Cancelar'),
+                  child: const Text('Cancelar'),
                 ),
               ],
             );
@@ -122,26 +123,26 @@ class _BoxInfoState extends State<BoxInfo> {
                     await usuarioService.setGlicemia(glicemia);
                     Navigator.of(context).pop();
                   },
-                  child: Text('Salvar'),
+                  child: const Text('Salvar'),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Cancelar'),
+                  child: const Text('Cancelar'),
                 ),
               ],
             );
           default:
             return AlertDialog(
-              title: Text('IMC'),
-              content: Text('Defina o campo IMC preenchendo altura e peso'),
+              title: const Text('IMC'),
+              content: const Text('Defina o campo IMC preenchendo altura e peso'),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('OK'),
+                  child: const Text('OK'),
                 ),
               ],
             );
