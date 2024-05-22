@@ -24,6 +24,14 @@ class UsuarioService {
         .set({'pressao': pressao}, SetOptions(merge: true));
   }
 
+  Future<void> setNome(String nome) async {
+    final user = FirebaseAuth.instance.currentUser!;
+    await _db
+        .collection('Usuarios')
+        .doc(user.email)
+        .set({'nome': nome}, SetOptions(merge: true));
+  }
+
   Future<void> setGlicemia(String glicemia) async {
     final user = FirebaseAuth.instance.currentUser!;
     await _db
@@ -62,6 +70,14 @@ class UsuarioService {
         .doc(documentID)
         .snapshots()
         .map((snapshot) => snapshot.data()?['pressao'] as String);
+  }
+
+  Stream<String> getNome(String documentID) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentID)
+        .snapshots()
+        .map((snapshot) => snapshot.data()?['nome'] as String);
   }
 
   Stream<String> getGlicemia(String documentId) {
