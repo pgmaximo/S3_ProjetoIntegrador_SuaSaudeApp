@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rxdart/rxdart.dart';
+// import 'package:flutter/material.dart';
 
 class UsuarioService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+
+  //funçõs para nome
 
   Future<void> setNome(String nome) async {
     final user = FirebaseAuth.instance.currentUser!;
@@ -12,6 +16,18 @@ class UsuarioService {
         .doc(user.email)
         .set({'nome': nome}, SetOptions(merge: true));
   }
+Stream<String?> getNome(String documentId) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentId)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.data()?['nome'] as String?;
+    });
+  }
+
+
+  // funções para pressao
 
   Future<void> setListaPressao(String documentId, String pressao) async {
     DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
@@ -34,77 +50,37 @@ class UsuarioService {
     }
 
     final classification = classifyPressao(pressao);
+    // debugPrint('Classificação: $classification');
 
-    // Adiciona a entrada de pressão com DateTime.now() e classificação
-    await docRef.update({
-      'pressao': FieldValue.arrayUnion([
-        {
-          'pressao': pressao,
-          'timestamp':
-              DateTime.now().toIso8601String(), // Adiciona o timestamp local
-          'classification': classification,
-        }
-      ])
-    });
-  }
-
-  Future<void> setGlicemia(String documentId, String glicemia) async {
-    DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
-
-    // Função para classificar a glicemia
-    String classifyGlicemia(String glicemia) {
-      final glicemiaInt = int.tryParse(glicemia);
-
-      if (glicemiaInt == null) return 'Desconhecida';
-      if (glicemiaInt < 70) return 'Baixa';
-      if (glicemiaInt < 100) return 'Normal';
-      if (glicemiaInt <= 126) return 'Atenção';
-      return 'Alta';
+    try {
+      // Adiciona a entrada de pressão com DateTime.now() e classificação
+      await docRef.update({
+        'pressao': FieldValue.arrayUnion([
+          {
+            'pressao': pressao,
+            'timestamp':
+                DateTime.now().toIso8601String(), // Adiciona o timestamp local
+            'classification': classification,
+          }
+        ])
+      });
+    } catch (e) {
+      // cria o documento se ainda nao existir
+      if (e is FirebaseException && e.code == 'not-found') {
+        await docRef.set({
+          'pressao': [
+            {
+              'pressao': pressao,
+              'timestamp': DateTime.now()
+                  .toIso8601String(), // Adiciona o timestamp local
+              'classification': classification,
+            }
+          ]
+        });
+      } else {
+        throw e;
+      }
     }
-
-    final classification = classifyGlicemia(glicemia);
-
-    // Adiciona a entrada de pressão com DateTime.now() e classificação
-    await docRef.update({
-      'glicemia': FieldValue.arrayUnion([
-        {
-          'glicemia': glicemia,
-          'timestamp':
-              DateTime.now().toIso8601String(), // Adiciona o timestamp local
-          'classification': classification,
-        }
-      ])
-    });
-  }
-
-  Future<void> setAltura(String altura) async {
-    final user = FirebaseAuth.instance.currentUser!;
-    await _db
-        .collection('Usuarios')
-        .doc(user.email)
-        .set({'altura': altura}, SetOptions(merge: true));
-  }
-
-  Future<void> setPesoAltura(String altura, double peso) async {
-    final user = FirebaseAuth.instance.currentUser!;
-    await _db.collection('Usuarios').doc(user.email).set({
-      'altura': altura,
-      'peso': peso,
-    }, SetOptions(merge: true));
-  }
-
-  Future<void> setPeso(String documentId, double peso) async {
-    DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
-    // Adiciona a entrada de pressão com DateTime.now()
-    await docRef.update({
-      'peso': FieldValue.arrayUnion([
-        {
-          'peso': peso,
-          'timestamp':
-              DateTime.now().toIso8601String(), // Adiciona o timestamp local
-        }
-      ])
-    });
   }
 
   Stream<String> getUltimaPressao(String documentID) {
@@ -122,27 +98,6 @@ class UsuarioService {
           return timeB.compareTo(timeA);
         });
         return "${pressoes.first['pressao'] as String}\n${pressoes.first['classification']}";
-      } else {
-        return "sem dados";
-      }
-    });
-  }
-
-  Stream<String> getUltimaGlicemia(String documentID) {
-    return _db
-        .collection('Usuarios')
-        .doc(documentID)
-        .snapshots()
-        .map((snapshot) {
-      List<dynamic> glicemias = snapshot.data()?['glicemia'];
-
-      if (glicemias.isNotEmpty) {
-        glicemias.sort((a, b) {
-          DateTime timeA = DateTime.parse(a['timestamp']);
-          DateTime timeB = DateTime.parse(b['timestamp']);
-          return timeB.compareTo(timeA);
-        });
-        return "${glicemias.first['glicemia'] as String} mg/dL\n${glicemias.first['classification']}";
       } else {
         return "sem dados";
       }
@@ -177,7 +132,78 @@ class UsuarioService {
     });
   }
 
-  Stream<List<Map<String, dynamic>>> getListaGlicemia(String documentId) {
+
+  // funções para glicemia
+
+  Future<void> setGlicemia(String documentId, String glicemia) async {
+    DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
+
+    // Função para classificar a glicemia
+    String classifyGlicemia(String glicemia) {
+      final glicemiaInt = int.tryParse(glicemia);
+
+      if (glicemiaInt == null) return 'Desconhecida';
+      if (glicemiaInt < 70) return 'Baixa';
+      if (glicemiaInt < 100) return 'Normal';
+      if (glicemiaInt <= 126) return 'Atenção';
+      return 'Alta';
+    }
+
+    final classification = classifyGlicemia(glicemia);
+
+    try {
+      // Adiciona a entrada de glicemia com DateTime.now() e classificação
+      await docRef.update({
+        'glicemia': FieldValue.arrayUnion([
+          {
+            'glicemia': glicemia,
+            'timestamp':
+                DateTime.now().toIso8601String(), // Adiciona o timestamp local
+            'classification': classification,
+          }
+        ])
+      });
+    } catch (e) {
+      // criar documento se nao existir
+      if (e is FirebaseException && e.code == 'not-found') {
+        await docRef.set({
+          'glicemia': [
+            {
+              'glicemia': glicemia,
+              'timestamp': DateTime.now()
+                  .toIso8601String(), // Adiciona o timestamp local
+              'classification': classification,
+            }
+          ]
+        });
+      } else {
+        throw e;
+      }
+    }
+  }
+
+Stream<String> getUltimaGlicemia(String documentID) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentID)
+        .snapshots()
+        .map((snapshot) {
+      List<dynamic> glicemias = snapshot.data()?['glicemia'];
+
+      if (glicemias.isNotEmpty) {
+        glicemias.sort((a, b) {
+          DateTime timeA = DateTime.parse(a['timestamp']);
+          DateTime timeB = DateTime.parse(b['timestamp']);
+          return timeB.compareTo(timeA);
+        });
+        return "${glicemias.first['glicemia'] as String} mg/dL\n${glicemias.first['classification']}";
+      } else {
+        return "sem dados";
+      }
+    });
+  }
+
+Stream<List<Map<String, dynamic>>> getListaGlicemia(String documentId) {
     return _db
         .collection('Usuarios')
         .doc(documentId)
@@ -192,7 +218,7 @@ class UsuarioService {
       glicemiaList.sort((a, b) {
         DateTime timestampA = DateTime.parse(a['timestamp']);
         DateTime timestampB = DateTime.parse(b['timestamp']);
-        return timestampB.compareTo(timestampA); // Inverte a comparação
+        return timestampB.compareTo(timestampA);
       });
 
       return glicemiaList.map((glicemiaEntry) {
@@ -202,6 +228,122 @@ class UsuarioService {
           'classification': glicemiaEntry['classification'],
         };
       }).toList();
+    });
+  }
+
+Stream<String> getGlicemia(String documentId) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentId)
+        .snapshots()
+        .map((snapshot) => snapshot.data()?['glicemia'] as String);
+  }
+
+  //funções para altura e peso
+  Future<void> setAltura(String altura) async {
+    final user = FirebaseAuth.instance.currentUser!;
+    await _db
+        .collection('Usuarios')
+        .doc(user.email)
+        .set({'altura': altura}, SetOptions(merge: true));
+  }
+
+  Future<void> setPesoAltura(String altura, double peso) async {
+    final user = FirebaseAuth.instance.currentUser!;
+    await _db.collection('Usuarios').doc(user.email).set({
+      'altura': altura,
+      'peso': peso,
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> setPeso(String documentId, double peso) async {
+    DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
+
+    try {
+      // Adiciona a entrada de peso com DateTime.now()
+      await docRef.update({
+        'peso': FieldValue.arrayUnion([
+          {
+            'peso': peso,
+            'timestamp':
+                DateTime.now().toIso8601String(), // Adiciona o timestamp local
+          }
+        ])
+      });
+    } catch (e) {
+      // cria o documento se ainda nao existir
+      if (e is FirebaseException && e.code == 'not-found') {
+        await docRef.set({
+          'peso': [
+            {
+              'peso': peso,
+              'timestamp': DateTime.now()
+                  .toIso8601String(), // Adiciona o timestamp local
+            }
+          ]
+        });
+      } else {
+        throw e;
+      }
+    }
+  }
+
+Stream<String> getAltura(String documentId) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentId)
+        .snapshots()
+        .map((snapshot) {
+      String alturaCm = snapshot.data()?['altura'] as String? ?? '';
+      // debugPrint('Altura raw data: $alturaCm');
+
+      alturaCm = alturaCm.replaceAll('m', '');
+      double? altura = double.tryParse(alturaCm);
+      if (altura == null) {
+        return 'Sem dados';
+      }
+
+      final alturaM = altura / 100;
+      String alturaStr = '${alturaM.toStringAsFixed(2)}m';
+      // debugPrint('Parsed altura: $alturaStr');
+      return alturaStr;
+    });
+  }
+
+  Stream<String> getPesoAltura(String documentId) {
+    return Rx.combineLatest2(
+      getAltura(documentId),
+      getUltimoPeso(documentId),
+      (String altura, String peso) {
+        String combinedStr = 'Altura: $altura\nPeso: $peso';
+        // debugPrint('altura e peso: $combinedStr');
+        return combinedStr;
+      },
+    );
+  }
+ 
+ Stream<String> getUltimoPeso(String documentID) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentID)
+        .snapshots()
+        .map((snapshot) {
+      List<dynamic> pesos = snapshot.data()?['peso'] ?? [];
+      // debugPrint('Pesos raw data: $pesos');
+
+      if (pesos.isNotEmpty) {
+        pesos.sort((a, b) {
+          DateTime timeA = DateTime.parse(a['timestamp']);
+          DateTime timeB = DateTime.parse(b['timestamp']);
+          return timeB.compareTo(timeA);
+        });
+
+        String pesoStr = "${pesos.first['peso']} kg";
+        // debugPrint('Latest peso: $pesoStr');
+        return pesoStr;
+      } else {
+        return "sem dados";
+      }
     });
   }
 
@@ -232,92 +374,7 @@ class UsuarioService {
     });
   }
 
-  Stream<String?> getNome(String documentId) {
-  return _db
-      .collection('Usuarios')
-      .doc(documentId)
-      .snapshots()
-      .map((snapshot) {
-    return snapshot.data()?['nome'] as String?;
-  });
-}
-
-
-  Stream<String> getGlicemia(String documentId) {
-    return _db
-        .collection('Usuarios')
-        .doc(documentId)
-        .snapshots()
-        .map((snapshot) => snapshot.data()?['glicemia'] as String);
-  }
-
-  Stream<String> getAltura(String documentId) {
-    return _db
-        .collection('Usuarios')
-        .doc(documentId)
-        .snapshots()
-        .map((snapshot) {
-      String alturaCm = snapshot.data()?['altura'] as String? ?? '';
-      // debugPrint('Altura raw data: $alturaCm');
-
-      alturaCm = alturaCm.replaceAll('m', '');
-      double? altura = double.tryParse(alturaCm);
-      if (altura == null) {
-        return 'Invalid altura';
-      }
-
-      final alturaM = altura / 100;
-      String alturaStr = '${alturaM.toStringAsFixed(2)}m';
-      // debugPrint('Parsed altura: $alturaStr');
-      return alturaStr;
-    });
-  }
-
-  Stream<String> getPeso(String documentId) {
-    return _db
-        .collection('Usuarios')
-        .doc(documentId)
-        .snapshots()
-        .map((snapshot) => '${snapshot.data()?['peso'] as double} kg');
-  }
-
-  Stream<String> getUltimoPeso(String documentID) {
-    return _db
-        .collection('Usuarios')
-        .doc(documentID)
-        .snapshots()
-        .map((snapshot) {
-      List<dynamic> pesos = snapshot.data()?['peso'] ?? [];
-      // debugPrint('Pesos raw data: $pesos');
-
-      if (pesos.isNotEmpty) {
-        pesos.sort((a, b) {
-          DateTime timeA = DateTime.parse(a['timestamp']);
-          DateTime timeB = DateTime.parse(b['timestamp']);
-          return timeB.compareTo(timeA);
-        });
-
-        String pesoStr = "${pesos.first['peso']} kg";
-        // debugPrint('Latest peso: $pesoStr');
-        return pesoStr;
-      } else {
-        return "sem dados";
-      }
-    });
-  }
-
-  Stream<String> getPesoAltura(String documentId) {
-    return Rx.combineLatest2(
-      getAltura(documentId),
-      getUltimoPeso(documentId),
-      (String altura, String peso) {
-        String combinedStr = 'Altura: $altura\nPeso: $peso';
-        // debugPrint('Combined altura and peso: $combinedStr');
-        return combinedStr;
-      },
-    );
-  }
-
+ 
   Stream<String> getIMC(String documentId) {
     Stream<double> alturaStream = getAltura(documentId).map((alturaString) {
       alturaString = alturaString.replaceAll('m', '').trim();

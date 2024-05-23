@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
                   } else {
                     String displayName = snapshot.data ?? user.email!;
                     return Text(
-                      "Bem vindo: $displayName",
+                      "Bem vindo $displayName!",
                       style: const TextStyle(fontSize: 20),
                     );
                   }

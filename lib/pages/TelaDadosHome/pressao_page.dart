@@ -32,38 +32,76 @@ class _PressaoPageState extends State<PressaoPage> {
   }
 
   Future<void> _addPressao() async {
-    TextEditingController controller = TextEditingController();
+  TextEditingController controller = TextEditingController();
 
-    await showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Inserir pressao'),
-            content: TextField(
-              controller: controller,
-              keyboardType: TextInputType.number,
-              decoration:
-                  const InputDecoration(hintText: "Pressao (exemplo 12/8)"),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  String pressao = controller.text;
-                  await usuarioService.setListaPressao(user.email!, pressao);
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Salvar'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cancelar'),
-              ),
-            ],
-          );
-        });
-  }
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Inserir pressao'),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(hintText: "Pressao (exemplo 12/8)"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              String pressao = controller.text;
+              try {
+                await usuarioService.setListaPressao(user.email!, pressao);
+                Navigator.of(context).pop();
+              } catch (e) {
+                debugPrint('Erro ao adicionar pressão: $e');
+              }
+            },
+            child: const Text('Salvar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancelar'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+  // Future<void> _addPressao() async {
+  //   TextEditingController controller = TextEditingController();
+
+  //   await showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return AlertDialog(
+  //           title: const Text('Inserir pressao'),
+  //           content: TextField(
+  //             controller: controller,
+  //             keyboardType: TextInputType.number,
+  //             decoration:
+  //                 const InputDecoration(hintText: "Pressao (exemplo 12/8)"),
+  //           ),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () async {
+  //                 String pressao = controller.text;
+  //                 await usuarioService.setListaPressao(user.email!, pressao);
+  //                 Navigator.of(context).pop();
+  //               },
+  //               child: const Text('Salvar'),
+  //             ),
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.of(context).pop();
+  //               },
+  //               child: const Text('Cancelar'),
+  //             ),
+  //           ],
+  //         );
+  //       });
+  // }
 
   @override
   Widget build(BuildContext context) {
