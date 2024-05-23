@@ -16,7 +16,7 @@ class _PressaoPageState extends State<PressaoPage> {
 
   Color _getClassificationColor(String classification) {
     switch (classification) {
-      case 'Pressao baixa':
+      case 'Baixa':
         return Colors.blue;
       case 'Ótima':
         return const Color.fromARGB(255, 0, 252, 8);

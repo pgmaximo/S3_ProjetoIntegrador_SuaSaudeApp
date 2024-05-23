@@ -36,7 +36,7 @@ class _GlicemiaPageState extends State<GlicemiaPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Inserir glcemia'),
+            title: const Text('Inserir glicemia'),
             content: TextField(
               controller: controller,
               keyboardType: TextInputType.number,

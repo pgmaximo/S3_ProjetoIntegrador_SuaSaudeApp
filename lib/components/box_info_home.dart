@@ -21,72 +21,29 @@ class BoxInfo extends StatefulWidget {
 
 class _BoxInfoState extends State<BoxInfo> {
   Future<void> _navigateHistorico(String campo) async {
-    // TextEditingController pesoController = TextEditingController();
-    // TextEditingController alturaController = TextEditingController();
+
     // TextEditingController controller = TextEditingController();
-    
-    switch(campo){
-      case 'altura': 
-        Navigator.pushNamed(context,'');
+
+    switch (campo) {
+      case 'altura':
+        Navigator.pushNamed(context, '/peso_page');
         break;
       case 'pressao':
-        Navigator.pushNamed(context,'/pressao_page');
+        Navigator.pushNamed(context, '/pressao_page');
         break;
       case 'glicemia':
-        Navigator.pushNamed(context,'/glicemia_page');
+        Navigator.pushNamed(context, '/glicemia_page');
+        break;
+      case 'IMC':
+        showDialog(
+            context: context,
+            builder: (context) {
+              return const AlertDialog(
+                title: Text("IMC é definido inserindo altura e peso!", textAlign: TextAlign.center,),
+              );
+            });
         break;
     }
-
-    //       case 'altura':
-    //         return AlertDialog(
-    //           title: const Text('Inserir Peso e Altura'),
-    //           content: Column(
-    //             mainAxisSize: MainAxisSize.min,
-    //             children: [
-    //               TextField(
-    //                 controller: pesoController,
-    //                 keyboardType: TextInputType.number,
-    //                 decoration: const InputDecoration(
-    //                   hintText: "Peso em kg",
-    //                 ),
-    //               ),
-    //               const SizedBox(height: 8),
-    //               TextField(
-    //                 controller: alturaController,
-    //                 keyboardType: TextInputType.number,
-    //                 decoration: const InputDecoration(
-    //                   hintText: "Altura em cm",
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //           actions: [
-    //             TextButton(
-    //               onPressed: () async {
-    //                 double? peso = double.tryParse(pesoController.text);
-    //                 String altura = alturaController.text;
-
-    //                 if (peso != null) {
-    //                   await usuarioService.setPesoAltura(altura, peso);
-    //                   Navigator.of(context).pop();
-    //                 } else {
-    //                   ScaffoldMessenger.of(context).showSnackBar(
-    //                     const SnackBar(
-    //                         content: Text(
-    //                             'Por favor, insira valores válidos para peso e altura.')),
-    //                   );
-    //                 }
-    //               },
-    //               child: const Text('Salvar'),
-    //             ),
-    //             TextButton(
-    //               onPressed: () {
-    //                 Navigator.of(context).pop();
-    //               },
-    //               child: const Text('Cancelar'),
-    //             ),
-    //           ],
-    //         );
   }
 
   final UsuarioService usuarioService = UsuarioService();

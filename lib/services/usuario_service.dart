@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
 class UsuarioService {
@@ -26,7 +27,7 @@ class UsuarioService {
 
       if (sistolica == null || diastolica == null) return 'Desconhecida';
 
-      if (sistolica < 9 || diastolica < 6) return 'Pressao baixa';
+      if (sistolica < 9 || diastolica < 6) return 'Baixa';
       if (sistolica < 12 && diastolica < 8) return 'Ótima';
       if (sistolica < 13 && diastolica < 8.5) return 'Normal';
       if (sistolica < 14 && diastolica < 9) return 'Atenção';
@@ -53,7 +54,6 @@ class UsuarioService {
 
     // Função para classificar a glicemia
     String classifyGlicemia(String glicemia) {
-
       final glicemiaInt = int.tryParse(glicemia);
 
       if (glicemiaInt == null) return 'Desconhecida';
@@ -78,14 +78,6 @@ class UsuarioService {
     });
   }
 
-  // Future<void> setGlicemia(String glicemia) async {
-  //   final user = FirebaseAuth.instance.currentUser!;
-  //   await _db
-  //       .collection('Usuarios')
-  //       .doc(user.email)
-  //       .set({'glicemia': glicemia}, SetOptions(merge: true));
-  // }
-
   Future<void> setAltura(String altura) async {
     final user = FirebaseAuth.instance.currentUser!;
     await _db
@@ -102,12 +94,18 @@ class UsuarioService {
     }, SetOptions(merge: true));
   }
 
-  Future<void> setPeso(double peso) async {
-    final user = FirebaseAuth.instance.currentUser!;
-    await _db
-        .collection('Usuarios')
-        .doc(user.email)
-        .set({'peso': peso}, SetOptions(merge: true));
+  Future<void> setPeso(String documentId, double peso) async {
+    DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
+    // Adiciona a entrada de pressão com DateTime.now()
+    await docRef.update({
+      'peso': FieldValue.arrayUnion([
+        {
+          'peso': peso,
+          'timestamp':
+              DateTime.now().toIso8601String(), // Adiciona o timestamp local
+        }
+      ])
+    });
   }
 
   Stream<String> getUltimaPressao(String documentID) {
@@ -146,6 +144,28 @@ class UsuarioService {
           return timeB.compareTo(timeA);
         });
         return "${glicemias.first['glicemia'] as String} mg/dL\n${glicemias.first['classification']}";
+      } else {
+        return "sem dados";
+      }
+    });
+  }
+
+  Stream<String> getUltimoPeso(String documentID) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentID)
+        .snapshots()
+        .map((snapshot) {
+      List<dynamic> pesos = snapshot.data()?['peso'];
+
+      if (pesos.isNotEmpty) {
+        pesos.sort((a, b) {
+          DateTime timeA = DateTime.parse(a['timestamp']);
+          DateTime timeB = DateTime.parse(b['timestamp']);
+          return timeB.compareTo(timeA);
+        });
+        debugPrint(pesos.first['peso'] as String);
+        return "${pesos.first['peso'] as String} kg";
       } else {
         return "sem dados";
       }
@@ -208,6 +228,33 @@ class UsuarioService {
     });
   }
 
+  Stream<List<Map<String, dynamic>>> getListaPeso(String documentId) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentId)
+        .snapshots()
+        .map((snapshot) {
+      var data = snapshot.data() as Map<String, dynamic>;
+      var pesoList = data['peso'] as List<dynamic>?;
+
+      if (pesoList == null) return [];
+
+      // Ordena a lista de pressões do mais recente para o mais antigo
+      pesoList.sort((a, b) {
+        DateTime timestampA = DateTime.parse(a['timestamp']);
+        DateTime timestampB = DateTime.parse(b['timestamp']);
+        return timestampB.compareTo(timestampA); // Inverte a comparação
+      });
+
+      return pesoList.map((pesoEntry) {
+        return {
+          'peso': pesoEntry['peso'],
+          'timestamp': DateTime.parse(pesoEntry['timestamp']),
+        };
+      }).toList();
+    });
+  }
+
   Stream<String> getNome(String documentID) {
     return _db
         .collection('Usuarios')
@@ -249,7 +296,7 @@ class UsuarioService {
   Stream<String> getPesoAltura(String documentId) {
     return Rx.combineLatest2(
       getAltura(documentId),
-      getPeso(documentId),
+      getUltimoPeso(documentId),
       (String altura, String peso) {
         return 'Altura: $altura\nPeso: $peso';
       },
