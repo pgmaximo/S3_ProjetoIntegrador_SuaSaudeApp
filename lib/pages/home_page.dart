@@ -33,23 +33,22 @@ class _HomePageState extends State<HomePage> {
               ),
 
               //Texto bem vindo com nome do usuario
-              StreamBuilder<String>(
-              stream: usuarioService.getNome(user.email!),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else if (!snapshot.hasData) {
-                  return const Text('No data');
-                } else {
-                  return Text(
-                    "Bem vindo: ${snapshot.data}",
-                    style: const TextStyle(fontSize: 20),
-                  );
-                }
-              },
-            ),
+              StreamBuilder<String?>(
+                stream: usuarioService.getNome(user.email!),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    String displayName = snapshot.data ?? user.email!;
+                    return Text(
+                      "Bem vindo: $displayName",
+                      style: const TextStyle(fontSize: 20),
+                    );
+                  }
+                },
+              ),
 
               const SizedBox(height: 50),
 

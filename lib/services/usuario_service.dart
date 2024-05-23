@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
 class UsuarioService {
@@ -150,28 +149,6 @@ class UsuarioService {
     });
   }
 
-  Stream<String> getUltimoPeso(String documentID) {
-    return _db
-        .collection('Usuarios')
-        .doc(documentID)
-        .snapshots()
-        .map((snapshot) {
-      List<dynamic> pesos = snapshot.data()?['peso'];
-
-      if (pesos.isNotEmpty) {
-        pesos.sort((a, b) {
-          DateTime timeA = DateTime.parse(a['timestamp']);
-          DateTime timeB = DateTime.parse(b['timestamp']);
-          return timeB.compareTo(timeA);
-        });
-        debugPrint(pesos.first['peso'] as String);
-        return "${pesos.first['peso'] as String} kg";
-      } else {
-        return "sem dados";
-      }
-    });
-  }
-
   Stream<List<Map<String, dynamic>>> getListaPressao(String documentId) {
     return _db
         .collection('Usuarios')
@@ -255,13 +232,16 @@ class UsuarioService {
     });
   }
 
-  Stream<String> getNome(String documentID) {
-    return _db
-        .collection('Usuarios')
-        .doc(documentID)
-        .snapshots()
-        .map((snapshot) => snapshot.data()?['nome'] as String);
-  }
+  Stream<String?> getNome(String documentId) {
+  return _db
+      .collection('Usuarios')
+      .doc(documentId)
+      .snapshots()
+      .map((snapshot) {
+    return snapshot.data()?['nome'] as String?;
+  });
+}
+
 
   Stream<String> getGlicemia(String documentId) {
     return _db
@@ -277,11 +257,19 @@ class UsuarioService {
         .doc(documentId)
         .snapshots()
         .map((snapshot) {
-      String alturaCm = snapshot.data()?['altura'] as String;
+      String alturaCm = snapshot.data()?['altura'] as String? ?? '';
+      // debugPrint('Altura raw data: $alturaCm');
+
       alturaCm = alturaCm.replaceAll('m', '');
       double? altura = double.tryParse(alturaCm);
-      final alturaM = altura! / 100;
-      return '${alturaM.toStringAsFixed(2)}m';
+      if (altura == null) {
+        return 'Invalid altura';
+      }
+
+      final alturaM = altura / 100;
+      String alturaStr = '${alturaM.toStringAsFixed(2)}m';
+      // debugPrint('Parsed altura: $alturaStr');
+      return alturaStr;
     });
   }
 
@@ -293,19 +281,46 @@ class UsuarioService {
         .map((snapshot) => '${snapshot.data()?['peso'] as double} kg');
   }
 
+  Stream<String> getUltimoPeso(String documentID) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentID)
+        .snapshots()
+        .map((snapshot) {
+      List<dynamic> pesos = snapshot.data()?['peso'] ?? [];
+      // debugPrint('Pesos raw data: $pesos');
+
+      if (pesos.isNotEmpty) {
+        pesos.sort((a, b) {
+          DateTime timeA = DateTime.parse(a['timestamp']);
+          DateTime timeB = DateTime.parse(b['timestamp']);
+          return timeB.compareTo(timeA);
+        });
+
+        String pesoStr = "${pesos.first['peso']} kg";
+        // debugPrint('Latest peso: $pesoStr');
+        return pesoStr;
+      } else {
+        return "sem dados";
+      }
+    });
+  }
+
   Stream<String> getPesoAltura(String documentId) {
     return Rx.combineLatest2(
       getAltura(documentId),
       getUltimoPeso(documentId),
       (String altura, String peso) {
-        return 'Altura: $altura\nPeso: $peso';
+        String combinedStr = 'Altura: $altura\nPeso: $peso';
+        // debugPrint('Combined altura and peso: $combinedStr');
+        return combinedStr;
       },
     );
   }
 
   Stream<String> getIMC(String documentId) {
     Stream<double> alturaStream = getAltura(documentId).map((alturaString) {
-      alturaString = alturaString.replaceAll('m', '');
+      alturaString = alturaString.replaceAll('m', '').trim();
       double? altura = double.tryParse(alturaString);
       if (altura == null || altura <= 0) {
         throw Exception('Altura inválida');
@@ -313,11 +328,11 @@ class UsuarioService {
       return altura;
     });
 
-    Stream<double> pesoStream = getPeso(documentId).map((pesoString) {
-      pesoString = pesoString.replaceAll('kg', '');
+    Stream<double> pesoStream = getUltimoPeso(documentId).map((pesoString) {
+      pesoString = pesoString.replaceAll('kg', '').trim();
       double? peso = double.tryParse(pesoString);
       if (peso == null || peso <= 0) {
-        throw Exception('Altura inválida');
+        throw Exception('Peso inválido');
       }
       return peso;
     });

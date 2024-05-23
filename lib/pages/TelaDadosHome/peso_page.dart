@@ -36,7 +36,7 @@ class _PesoPageState extends State<PesoPage> {
                   controller: alturaController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
-                    hintText: "Altura em cm",
+                    hintText: "Altura em cm (vazio se nao for mudar)",
                   ),
                 )
               ],
