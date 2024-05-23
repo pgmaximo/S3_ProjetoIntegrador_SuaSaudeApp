@@ -33,7 +33,7 @@ class _BoxInfoState extends State<BoxInfo> {
         Navigator.pushNamed(context,'/pressao_page');
         break;
       case 'glicemia':
-        Navigator.pushNamed(context,'');
+        Navigator.pushNamed(context,'/glicemia_page');
         break;
     }
 
@@ -96,7 +96,7 @@ class _BoxInfoState extends State<BoxInfo> {
       case 'pressao':
         return usuarioService.getUltimaPressao(documentId);
       case 'glicemia':
-        return usuarioService.getGlicemia(documentId);
+        return usuarioService.getUltimaGlicemia(documentId);
       case 'altura':
         return usuarioService.getPesoAltura(documentId);
       case 'IMC':
@@ -159,50 +159,5 @@ class _BoxInfoState extends State<BoxInfo> {
                 ],
               ),
             )));
-
-    // return SizedBox(
-    //   child: Column(
-    //     mainAxisAlignment: MainAxisAlignment.center,
-    //     children: [
-    //       SizedBox(
-    //         width: 150,
-    //         child: Text(
-    //           // texto que sera exibido acima da caixa com a informação
-    //           widget.textoTitulo,
-    //           style: const TextStyle(fontSize: 15),
-    //           textAlign: TextAlign.center,
-    //         ),
-    //       ),
-    //       SizedBox(
-    //         height: 50,
-    //         width: 150,
-    //         child: DecoratedBox(
-    //           decoration: BoxDecoration(
-    //             color: Colors.grey[300],
-    //           ),
-    //           child: Center(
-    //             child: StreamBuilder<String>(
-    //               stream: _getCampoStream(widget.documentId, widget.campo),
-    //               builder: (context, snapshot) {
-    //                 if (snapshot.connectionState == ConnectionState.waiting) {
-    //                   return const CircularProgressIndicator();
-    //                 } else if (snapshot.hasError) {
-    //                   return Text('Erro: ${snapshot.error}');
-    //                 } else if (snapshot.hasData) {
-    //                   return Text(
-    //                     snapshot.data ?? 'Sem dados',
-    //                     textAlign: TextAlign.center,
-    //                   );
-    //                 } else {
-    //                   return const Text('Sem dados');
-    //                 }
-    //               },
-    //             ),
-    //           ),
-    //         ),
-    //       )
-    //     ],
-    //   ),
-    // );
   }
 }

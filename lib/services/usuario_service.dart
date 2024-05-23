@@ -5,61 +5,13 @@ import 'package:rxdart/rxdart.dart';
 class UsuarioService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // Future<void> createUsuario(String pressao, String glicemia, String altura, double peso) async {
-  //   final user = FirebaseAuth.instance.currentUser!;
-  //   // final String email = user.email!;
-  //   await _db.collection('Usuarios').doc(user.email).set({
-  //     'pressao': pressao,
-  //     'glicemia': glicemia,
-  //     'altura': altura,
-  //     'peso': peso
-  //   });
-  // }
-
-  Future<void> setPressao(String pressao) async {
+  Future<void> setNome(String nome) async {
     final user = FirebaseAuth.instance.currentUser!;
     await _db
         .collection('Usuarios')
         .doc(user.email)
-        .set({'pressao': pressao}, SetOptions(merge: true));
+        .set({'nome': nome}, SetOptions(merge: true));
   }
-
-  // Future<void> setListaPressao(String documentId, String pressao) async {
-  //   await _db.collection('Usuarios').doc(documentId).update({
-  //     'pressao': FieldValue.arrayUnion([
-  //       {
-  //         'pressao': pressao,
-  //         'timestamp': FieldValue.serverTimestamp(),
-  //       }
-  //     ])
-  //   });
-  // }
-
-  // Future<void> setListaPressao(String documentId, String pressao) async {
-  //   DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
-
-  //   // Adicionar a pressão ao array
-  //   await docRef.update({
-  //     'pressao': FieldValue.arrayUnion([pressao]),
-  //     'lastUpdated': FieldValue.serverTimestamp(),  // Adicionar um timestamp ao documento
-  //   });
-  // }
-
-  // Future<void> setListaPressao(String documentId, String pressao) async {
-  //   DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
-
-  //   // Adicionar a entrada de pressão com o timestamp
-  //   Map<String, dynamic> pressaoEntry = {
-  //     'pressao': pressao,
-  //     'timestamp': null,
-  //   };
-
-  //   // Adicionar a entrada de pressão à lista
-  //   await docRef.update({
-  //     'pressao': FieldValue.arrayUnion([pressaoEntry]),
-  //     'timestamp': FieldValue.serverTimestamp()
-  //   });
-  // }
 
   Future<void> setListaPressao(String documentId, String pressao) async {
     DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
@@ -74,10 +26,10 @@ class UsuarioService {
 
       if (sistolica == null || diastolica == null) return 'Desconhecida';
 
-      if (sistolica < 90 || diastolica < 60) return 'Pressao baixa';
-      if (sistolica < 120 && diastolica < 80) return 'Ótima';
-      if (sistolica < 130 && diastolica < 85) return 'Normal';
-      if (sistolica < 140 && diastolica < 90) return 'Atenção';
+      if (sistolica < 9 || diastolica < 6) return 'Pressao baixa';
+      if (sistolica < 12 && diastolica < 8) return 'Ótima';
+      if (sistolica < 13 && diastolica < 8.5) return 'Normal';
+      if (sistolica < 14 && diastolica < 9) return 'Atenção';
       return 'Alta';
     }
 
@@ -96,21 +48,43 @@ class UsuarioService {
     });
   }
 
-  Future<void> setNome(String nome) async {
-    final user = FirebaseAuth.instance.currentUser!;
-    await _db
-        .collection('Usuarios')
-        .doc(user.email)
-        .set({'nome': nome}, SetOptions(merge: true));
+  Future<void> setGlicemia(String documentId, String glicemia) async {
+    DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
+
+    // Função para classificar a glicemia
+    String classifyGlicemia(String glicemia) {
+
+      final glicemiaInt = int.tryParse(glicemia);
+
+      if (glicemiaInt == null) return 'Desconhecida';
+      if (glicemiaInt < 70) return 'Baixa';
+      if (glicemiaInt < 100) return 'Normal';
+      if (glicemiaInt <= 126) return 'Atenção';
+      return 'Alta';
+    }
+
+    final classification = classifyGlicemia(glicemia);
+
+    // Adiciona a entrada de pressão com DateTime.now() e classificação
+    await docRef.update({
+      'glicemia': FieldValue.arrayUnion([
+        {
+          'glicemia': glicemia,
+          'timestamp':
+              DateTime.now().toIso8601String(), // Adiciona o timestamp local
+          'classification': classification,
+        }
+      ])
+    });
   }
 
-  Future<void> setGlicemia(String glicemia) async {
-    final user = FirebaseAuth.instance.currentUser!;
-    await _db
-        .collection('Usuarios')
-        .doc(user.email)
-        .set({'glicemia': glicemia}, SetOptions(merge: true));
-  }
+  // Future<void> setGlicemia(String glicemia) async {
+  //   final user = FirebaseAuth.instance.currentUser!;
+  //   await _db
+  //       .collection('Usuarios')
+  //       .doc(user.email)
+  //       .set({'glicemia': glicemia}, SetOptions(merge: true));
+  // }
 
   Future<void> setAltura(String altura) async {
     final user = FirebaseAuth.instance.currentUser!;
@@ -157,28 +131,23 @@ class UsuarioService {
     });
   }
 
-  Stream<String> getPressao(String documentID) {
+  Stream<String> getUltimaGlicemia(String documentID) {
     return _db
         .collection('Usuarios')
         .doc(documentID)
         .snapshots()
         .map((snapshot) {
-      // lista com todos os registros
-      List<dynamic> pressoes = snapshot.data()?['pressao'];
+      List<dynamic> glicemias = snapshot.data()?['glicemia'];
 
-      // Verifica se há registros
-      if (pressoes.isNotEmpty) {
-        // Ordena os registros pelo timestamp
-        pressoes.sort((a, b) {
+      if (glicemias.isNotEmpty) {
+        glicemias.sort((a, b) {
           DateTime timeA = DateTime.parse(a['timestamp']);
           DateTime timeB = DateTime.parse(b['timestamp']);
           return timeB.compareTo(timeA);
         });
-
-        // pressão do registro mais recente
-        return pressoes.first['pressao'] as String;
+        return "${glicemias.first['glicemia'] as String} mg/dL\n${glicemias.first['classification']}";
       } else {
-        return "sem dados de pressao";
+        return "sem dados";
       }
     });
   }
@@ -211,70 +180,33 @@ class UsuarioService {
     });
   }
 
-  // Stream<List<Map<String, dynamic>>> getListaPressao(String documentID) {
-  //   return _db
-  //       .collection('Usuarios')
-  //       .doc(documentID)
-  //       .snapshots()
-  //       .map((snapshot) {
-  //     var data = snapshot.data() as Map<String, dynamic>;
-  //     var pressaoList = data['pressao'] as List<dynamic>?;
-  //     if (pressaoList == null) return [];
+  Stream<List<Map<String, dynamic>>> getListaGlicemia(String documentId) {
+    return _db
+        .collection('Usuarios')
+        .doc(documentId)
+        .snapshots()
+        .map((snapshot) {
+      var data = snapshot.data() as Map<String, dynamic>;
+      var glicemiaList = data['glicemia'] as List<dynamic>?;
 
-  //     // Convert timestamp strings to DateTime objects
-  //     pressaoList.forEach((entry) {
-  //       entry['timestamp'] = DateTime.parse(entry['timestamp']);
-  //     });
+      if (glicemiaList == null) return [];
 
-  //     // Sort the list by timestamp in descending order
-  //     pressaoList.sort((a, b) =>
-  //         (b['timestamp'] as DateTime).compareTo(a['timestamp'] as DateTime));
+      // Ordena a lista de pressões do mais recente para o mais antigo
+      glicemiaList.sort((a, b) {
+        DateTime timestampA = DateTime.parse(a['timestamp']);
+        DateTime timestampB = DateTime.parse(b['timestamp']);
+        return timestampB.compareTo(timestampA); // Inverte a comparação
+      });
 
-  //     // Convert timestamp back to string (if needed)
-  //     pressaoList.forEach((entry) {
-  //       entry['timestamp'] = (entry['timestamp'] as DateTime).toIso8601String();
-  //     });
-
-  //     // Classify blood pressure readings
-  //     pressaoList.forEach((entry) {
-  //       var pressao = entry['pressao'] as String;
-  //       var parts = pressao.split('/');
-  //       var sistolico = int.parse(parts[0]);
-  //       var diastolico = int.parse(parts[1]);
-
-  //       if (sistolico < 90 && diastolico < 60) {
-  //         entry['classificacao'] = 'Pressao baixa';
-  //       } else if (sistolico >= 90 &&
-  //           sistolico <= 120 &&
-  //           diastolico >= 60 &&
-  //           diastolico <= 80) {
-  //         entry['classificacao'] = 'Ótima';
-  //       } else if (sistolico > 120 &&
-  //           sistolico <= 129 &&
-  //           diastolico > 80 &&
-  //           diastolico <= 84) {
-  //         entry['classificacao'] = 'Normal';
-  //       } else if (sistolico >= 130 &&
-  //           sistolico <= 139 &&
-  //           diastolico >= 85 &&
-  //           diastolico <= 89) {
-  //         entry['classificacao'] = 'Atenção';
-  //       } else if (sistolico >= 140 && diastolico >= 90) {
-  //         entry['classificacao'] = 'Alta';
-  //       } else {
-  //         entry['classificacao'] = 'Desconhecido';
-  //       }
-  //     });
-
-  //     return pressaoList.map((pressaoEntry) {
-  //       return {
-  //         'pressao': pressaoEntry['pressao'],
-  //         'timestamp': pressaoEntry['timestamp'],
-  //         'classificacao': pressaoEntry['classificacao'],
-  //       };
-  //     }).toList();
-  //   });
-  // }
+      return glicemiaList.map((glicemiaEntry) {
+        return {
+          'glicemia': glicemiaEntry['glicemia'],
+          'timestamp': DateTime.parse(glicemiaEntry['timestamp']),
+          'classification': glicemiaEntry['classification'],
+        };
+      }).toList();
+    });
+  }
 
   Stream<String> getNome(String documentID) {
     return _db

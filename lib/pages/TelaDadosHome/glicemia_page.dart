@@ -3,23 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/services/usuario_service.dart';
 
-class PressaoPage extends StatefulWidget {
-  const PressaoPage({super.key});
+class GlicemiaPage extends StatefulWidget {
+  const GlicemiaPage({super.key});
 
   @override
-  State<PressaoPage> createState() => _PressaoPageState();
+  State<GlicemiaPage> createState() => _GlicemiaPageState();
 }
 
-class _PressaoPageState extends State<PressaoPage> {
+class _GlicemiaPageState extends State<GlicemiaPage> {
   final UsuarioService usuarioService = UsuarioService();
   final user = FirebaseAuth.instance.currentUser!;
 
   Color _getClassificationColor(String classification) {
     switch (classification) {
-      case 'Pressao baixa':
+      case 'Baixa':
         return Colors.blue;
-      case 'Ótima':
-        return const Color.fromARGB(255, 0, 252, 8);
       case 'Normal':
         return Colors.green;
       case 'Atenção':
@@ -31,25 +29,25 @@ class _PressaoPageState extends State<PressaoPage> {
     }
   }
 
-  Future<void> _addPressao() async {
+  Future<void> _addGlicemia() async {
     TextEditingController controller = TextEditingController();
 
     await showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: const Text('Inserir pressao'),
+            title: const Text('Inserir glcemia'),
             content: TextField(
               controller: controller,
               keyboardType: TextInputType.number,
               decoration:
-                  const InputDecoration(hintText: "Pressao (exemplo 12/8)"),
+                  const InputDecoration(hintText: "Glicemia (exemplo 80)"),
             ),
             actions: [
               TextButton(
                 onPressed: () async {
-                  String pressao = controller.text;
-                  await usuarioService.setListaPressao(user.email!, pressao);
+                  String glicemia = controller.text;
+                  await usuarioService.setGlicemia(user.email!, glicemia);
                   Navigator.of(context).pop();
                 },
                 child: const Text('Salvar'),
@@ -68,9 +66,9 @@ class _PressaoPageState extends State<PressaoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: const AppBarWidget(titulo: 'Aferições de Pressão', rota: '/home'),
+        appBar: const AppBarWidget(titulo: 'Aferições de Glicemia', rota: '/home'),
         body: StreamBuilder<List<Map<String, dynamic>>>(
-          stream: usuarioService.getListaPressao(user.email!),
+          stream: usuarioService.getListaGlicemia(user.email!),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -80,29 +78,29 @@ class _PressaoPageState extends State<PressaoPage> {
             }
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const Center(
-                  child: Text('Nenhuma aferição de pressão encontrada'));
+                  child: Text('Nenhuma aferição de glicemia encontrada'));
             }
       
-            List<Map<String, dynamic>> pressaoList = snapshot.data!;
+            List<Map<String, dynamic>> glicemiaList = snapshot.data!;
       
             return ListView.builder(
-              itemCount: pressaoList.length,
+              itemCount: glicemiaList.length,
               itemBuilder: (context, index) {
-                var pressaoData = pressaoList[index];
+                var glicemiaData = glicemiaList[index];
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
                     title: Text(
-                      'Pressão: ${pressaoData['pressao']}',
+                      'Glicemia: ${glicemiaData['glicemia']}mg/dL',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      'Data: ${pressaoData['timestamp']}',
+                      'Data: ${glicemiaData['timestamp']}',
                     ),
                     trailing: Text(
-                      '${pressaoData['classification']}',
+                      '${glicemiaData['classification']}',
                       style: TextStyle(
-                        color: _getClassificationColor(pressaoData['classification']),
+                        color: _getClassificationColor(glicemiaData['classification']),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -117,7 +115,7 @@ class _PressaoPageState extends State<PressaoPage> {
           padding: const EdgeInsets.all(24),
           child: FloatingActionButton(
             onPressed: () {
-              _addPressao();
+              _addGlicemia();
             },
             elevation: 0,
             shape: const CircleBorder(),
