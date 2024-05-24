@@ -12,7 +12,7 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
   Widget build(BuildContext context) {
     return BottomAppBar(
       height: 75,
-      color: Colors.blueGrey[400], 
+      color: Colors.blueGrey[400],
       elevation: 0,
       child: SizedBox(
         height: 40,
@@ -29,8 +29,8 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
                         "Nós somos a Sua Saúde, um aplicativo desenvolvido para melhorar a gestão "
                         "da sua própria saúde e melhorar sua qualidade de vida. Aqui você pode colocar "
                         "lembretes de consultas, colocar um resumo delas, definir os horários de suas "
-                        "medicações com facilidade, organizar os resultados de seus exames, bem como "
-                        "armazenar uma cópia deles e muito mais"),
+                        "medicações com facilidade, organizar os resultados de seus exames, e muito mais"
+                      ),
                     actions: [
                       TextButton(
                         onPressed: () {

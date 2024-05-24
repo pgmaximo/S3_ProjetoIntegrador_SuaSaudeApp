@@ -68,18 +68,39 @@ class _PesoPageState extends State<PesoPage> {
   }
 
   Future<void> _removePeso(Map<String, dynamic> pesoData) async {
-    try {
-      // debugPrint('Removing peso data: $pesoData');
-      await usuarioService.removePeso(user.email!, pesoData);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Peso removido com sucesso')),
-      );
-    } catch (e) {
-      // debugPrint('Erro ao remover peso: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao remover peso')),
-      );
-    }
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: const Text('Apagar registro'),
+              content: const Text('Deseja excluir essa entrada?'),
+              actions: [
+                TextButton(
+                    onPressed: () async {
+                      try {
+                        // debugPrint('Peso data: $pesoData');
+                        await usuarioService.removePeso(user.email!, pesoData);
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Peso removido com sucesso')),
+                        );
+                      } catch (e) {
+                        // debugPrint('Erro ao remover peso: $e');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Erro ao remover peso')),
+                        );
+                      }
+                    },
+                    child: const Text('Remover')),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancelar'),
+                ),
+              ]);
+        });
   }
 
   @override

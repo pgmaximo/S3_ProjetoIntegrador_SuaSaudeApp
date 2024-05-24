@@ -56,7 +56,7 @@ class _PressaoPageState extends State<PressaoPage> {
                   await usuarioService.setListaPressao(user.email!, pressao);
                   Navigator.of(context).pop();
                 } catch (e) {
-                  debugPrint('Erro ao adicionar pressão: $e');
+                  // debugPrint('Erro ao adicionar pressão: $e');
                 }
               },
               child: const Text('Salvar'),
@@ -74,18 +74,41 @@ class _PressaoPageState extends State<PressaoPage> {
   }
 
   Future<void> _removePressao(Map<String, dynamic> pressaoData) async {
-    try {
-      debugPrint('Removing pressure data: $pressaoData');
-      await usuarioService.removePressao(user.email!, pressaoData);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pressão removida com sucesso')),
-      );
-    } catch (e) {
-      debugPrint('Erro ao remover pressão: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao remover pressão')),
-      );
-    }
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: const Text('Apagar registro'),
+              content: const Text('Deseja excluir essa entrada?'),
+              actions: [
+                TextButton(
+                    onPressed: () async {
+                      try {
+                        // debugPrint('Removing pressure data: $pressaoData');
+                        await usuarioService.removePressao(
+                            user.email!, pressaoData);
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Pressão removida com sucesso')),
+                        );
+                      } catch (e) {
+                        // debugPrint('Erro ao remover pressão: $e');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Erro ao remover pressão')),
+                        );
+                      }
+                    },
+                    child: const Text('Remover')),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancelar'),
+                ),
+              ]);
+        });
   }
 
   @override

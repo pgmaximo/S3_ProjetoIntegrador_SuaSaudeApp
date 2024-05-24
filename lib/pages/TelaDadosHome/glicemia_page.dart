@@ -66,18 +66,39 @@ class _GlicemiaPageState extends State<GlicemiaPage> {
   }
 
   Future<void> _removeGlicemia(Map<String, dynamic> glicemiaData) async {
-    try {
-      // debugPrint('Removing pressure data: $glicemiaData');
-      await usuarioService.removeGlicemia(user.email!, glicemiaData);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Glicemia removida com sucesso')),
-      );
-    } catch (e) {
-      // debugPrint('Erro ao remover glicemia: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao remover glicemia')),
-      );
-    }
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: const Text('Apagar registro'),
+              content: const Text('Deseja excluir essa entrada?'),
+              actions: [
+                TextButton(
+                    onPressed: () async {
+                      try {
+                        // debugPrint('Glicemia data: $glicemiaData');
+                        await usuarioService.removeGlicemia(user.email!, glicemiaData);
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Glicemia removido com sucesso')),
+                        );
+                      } catch (e) {
+                        // debugPrint('Erro ao remover glicemia: $e');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Erro ao remover glicemia')),
+                        );
+                      }
+                    },
+                    child: const Text('Remover')),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancelar'),
+                ),
+              ]);
+        });
   }
 
   @override
