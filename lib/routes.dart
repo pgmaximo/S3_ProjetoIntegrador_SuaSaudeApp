@@ -15,12 +15,12 @@ import 'package:teste_firebase/pages/LeituraPDFTeste/lerpdf_page.dart';
 
 
 Map<String, Widget Function(BuildContext context)> rotas = {
-  '/home': (context) => HomePage(),
+  '/home': (context) => const HomePage(),
 
   // Rota para pagina de autenticaçao
   '/auth_page' : (context) => const AuthPage(),
 
-  // Rotas para pagina de pressao, glicemia, altura e peso
+  // Rotas para paginas da home (pressao, glicemia e peso)
   '/pressao_page' : (context) => const PressaoPage(),
   '/glicemia_page' : (context) => const GlicemiaPage(),
   '/peso_page' : (context) => const PesoPage(),

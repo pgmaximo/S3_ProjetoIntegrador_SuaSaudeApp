@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
@@ -62,15 +64,16 @@ class _GlicemiaPageState extends State<GlicemiaPage> {
           );
         });
   }
-Future<void> _removeGlicemia(Map<String, dynamic> glicemiaData) async {
+
+  Future<void> _removeGlicemia(Map<String, dynamic> glicemiaData) async {
     try {
-      debugPrint('Removing pressure data: $glicemiaData');
+      // debugPrint('Removing pressure data: $glicemiaData');
       await usuarioService.removeGlicemia(user.email!, glicemiaData);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Glicemia removida com sucesso')),
       );
     } catch (e) {
-      debugPrint('Erro ao remover glicemia: $e');
+      // debugPrint('Erro ao remover glicemia: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Erro ao remover glicemia')),
       );
@@ -80,7 +83,8 @@ Future<void> _removeGlicemia(Map<String, dynamic> glicemiaData) async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppBarWidget(titulo: 'Aferições de Glicemia', rota: '/home'),
+      appBar:
+          const AppBarWidget(titulo: 'Aferições de Glicemia', rota: '/home'),
       body: StreamBuilder<List<Map<String, dynamic>>>(
         stream: usuarioService.getListaGlicemia(user.email!),
         builder: (context, snapshot) {
@@ -106,7 +110,7 @@ Future<void> _removeGlicemia(Map<String, dynamic> glicemiaData) async {
                 child: ListTile(
                   title: Text(
                     '${glicemiaData['glicemia']}mg/dL',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     'Data: ${(glicemiaData['timestamp'] as DateTime).toIso8601String()}',
@@ -120,12 +124,12 @@ Future<void> _removeGlicemia(Map<String, dynamic> glicemiaData) async {
                     ),
                   ),
                   onLongPress: () async {
-                    print('Long press detected on: ${glicemiaData['glicemia']}');
+                    // print('Long press on: ${glicemiaData['glicemia']}');
                     try {
                       await _removeGlicemia(glicemiaData);
-                      print('Glicemia removed: ${glicemiaData['glicemia']}');
+                      // print('Glicemia removed: ${glicemiaData['glicemia']}');
                     } catch (e) {
-                      print('Erro ao remover glicemia: $e');
+                      // print('Erro ao remover glicemia: $e');
                     }
                   },
                 ),

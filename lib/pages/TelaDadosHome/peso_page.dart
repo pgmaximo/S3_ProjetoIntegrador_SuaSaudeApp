@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
@@ -67,13 +69,13 @@ class _PesoPageState extends State<PesoPage> {
 
   Future<void> _removePeso(Map<String, dynamic> pesoData) async {
     try {
-      debugPrint('Removing peso data: $pesoData');
+      // debugPrint('Removing peso data: $pesoData');
       await usuarioService.removePeso(user.email!, pesoData);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Peso removido com sucesso')),
       );
     } catch (e) {
-      debugPrint('Erro ao remover peso: $e');
+      // debugPrint('Erro ao remover peso: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Erro ao remover peso')),
       );
@@ -109,18 +111,18 @@ class _PesoPageState extends State<PesoPage> {
                 child: ListTile(
                   title: Text(
                     '${pesoData['peso']}kg',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     'Data: ${(pesoData['timestamp'] as DateTime).toIso8601String()}',
                   ),
                   onLongPress: () async {
-                    print('Long press detected on: ${pesoData['peso']}');
+                    // print('Long press on: ${pesoData['peso']}');
                     try {
                       await _removePeso(pesoData);
-                      print('Peso removed: ${pesoData['peso']}');
+                      // print('Peso removed: ${pesoData['peso']}');
                     } catch (e) {
-                      print('Erro ao remover peso: $e');
+                      // print('Erro ao remover peso: $e');
                     }
                   },
                 ),

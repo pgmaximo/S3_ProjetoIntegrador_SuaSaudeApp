@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+// import 'package:flutter/material.dart';
 
 class UsuarioService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -133,7 +133,7 @@ class UsuarioService {
 
   Future<void> removePressao(
       String documentId, Map<String, dynamic> pressaoData) async {
-    debugPrint('Removing pressure data: $pressaoData');
+    // debugPrint('Removing pressure data: $pressaoData');
     DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
 
     try {
@@ -150,9 +150,9 @@ class UsuarioService {
           }
         ])
       });
-      debugPrint('Pressão successfully removed');
+      // debugPrint('Pressão successfully removed');
     } catch (error) {
-      debugPrint('Erro ao remover pressão: $error');
+      // debugPrint('Erro ao remover pressão: $error');
     }
   }
 
@@ -264,7 +264,7 @@ class UsuarioService {
 
   Future<void> removeGlicemia(
       String documentId, Map<String, dynamic> glicemiaData) async {
-    debugPrint('Removing glicemia data: $glicemiaData');
+    // debugPrint('Removing glicemia data: $glicemiaData');
     DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
 
     try {
@@ -281,9 +281,9 @@ class UsuarioService {
           }
         ])
       });
-      debugPrint('Glicemia successfully removed');
+      // debugPrint('Glicemia successfully removed');
     } catch (error) {
-      debugPrint('Erro ao remover pressão: $error');
+      // debugPrint('Erro ao remover pressão: $error');
     }
   }
 
@@ -424,7 +424,7 @@ class UsuarioService {
 
   Future<void> removePeso(
       String documentId, Map<String, dynamic> pesoData) async {
-    debugPrint('Removing peso data: $pesoData');
+    // debugPrint('Removing peso data: $pesoData');
     DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
 
     try {
@@ -440,9 +440,9 @@ class UsuarioService {
           }
         ])
       });
-      debugPrint('Peso successfully removed');
+      // debugPrint('Peso successfully removed');
     } catch (error) {
-      debugPrint('Erro ao remover pressão: $error');
+      // debugPrint('Erro ao remover pressão: $error');
     }
   }
 

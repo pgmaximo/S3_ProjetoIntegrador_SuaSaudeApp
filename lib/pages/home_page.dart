@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
+import 'package:teste_firebase/components/bottom_appbar_widget.dart';
 import 'package:teste_firebase/components/box_info_home.dart';
 import 'package:teste_firebase/services/usuario_service.dart';
 
@@ -149,47 +150,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text("Sobre nós"),
-                    content: const Text(
-                        "Nós somos a Sua Saúde, um aplicativo desenvolvido para melhorar a gestão "
-                        "da sua própria saúde e melhorar sua qualidade de vida. Aqui você pode colocar "
-                        "lembretes de consultas, colocar um resumo delas, definir os horários de suas "
-                        "medicações com facilidade, organizar os resultados de seus exames, bem como "
-                        "armazenar uma cópia deles e muito mais"),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text("Fechar"),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            child:
-                const Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              Text(
-                "Sobre nós",
-                style: TextStyle(
-                  color: Colors.blue,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ]),
-          ),
-        ),
-      ),
+      bottomNavigationBar: const BottomAppBarWidget(),
     );
   }
 }

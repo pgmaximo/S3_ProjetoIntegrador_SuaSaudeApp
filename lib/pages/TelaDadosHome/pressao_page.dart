@@ -1,4 +1,6 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
@@ -115,7 +117,7 @@ class _PressaoPageState extends State<PressaoPage> {
                 child: ListTile(
                   title: Text(
                     'Pressão: ${pressaoData['pressao']}',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     'Data: ${(pressaoData['timestamp'] as DateTime).toIso8601String()}',
@@ -129,12 +131,12 @@ class _PressaoPageState extends State<PressaoPage> {
                     ),
                   ),
                   onLongPress: () async {
-                    print('Long press detected on: ${pressaoData['pressao']}');
+                    // print('Long press on: ${pressaoData['pressao']}');
                     try {
                       await _removePressao(pressaoData);
-                      print('Pressão removed: ${pressaoData['pressao']}');
+                      // print('Pressão removed: ${pressaoData['pressao']}');
                     } catch (e) {
-                      print('Erro ao remover pressão: $e');
+                      // print('Erro ao remover pressão: $e');
                     }
                   },
                 ),
