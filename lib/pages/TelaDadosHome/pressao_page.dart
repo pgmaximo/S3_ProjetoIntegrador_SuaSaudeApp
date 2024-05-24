@@ -1,3 +1,4 @@
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
@@ -32,136 +33,128 @@ class _PressaoPageState extends State<PressaoPage> {
   }
 
   Future<void> _addPressao() async {
-  TextEditingController controller = TextEditingController();
+    TextEditingController controller = TextEditingController();
 
-  await showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Inserir pressao'),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(hintText: "Pressao (exemplo 12/8)"),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              String pressao = controller.text;
-              try {
-                await usuarioService.setListaPressao(user.email!, pressao);
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Inserir pressao'),
+          content: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            decoration:
+                const InputDecoration(hintText: "Pressao (exemplo 12/8)"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                String pressao = controller.text;
+                try {
+                  await usuarioService.setListaPressao(user.email!, pressao);
+                  Navigator.of(context).pop();
+                } catch (e) {
+                  debugPrint('Erro ao adicionar pressão: $e');
+                }
+              },
+              child: const Text('Salvar'),
+            ),
+            TextButton(
+              onPressed: () {
                 Navigator.of(context).pop();
-              } catch (e) {
-                debugPrint('Erro ao adicionar pressão: $e');
-              }
-            },
-            child: const Text('Salvar'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancelar'),
-          ),
-        ],
+              },
+              child: const Text('Cancelar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _removePressao(Map<String, dynamic> pressaoData) async {
+    try {
+      debugPrint('Removing pressure data: $pressaoData');
+      await usuarioService.removePressao(user.email!, pressaoData);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Pressão removida com sucesso')),
       );
-    },
-  );
-}
-
-  // Future<void> _addPressao() async {
-  //   TextEditingController controller = TextEditingController();
-
-  //   await showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //           title: const Text('Inserir pressao'),
-  //           content: TextField(
-  //             controller: controller,
-  //             keyboardType: TextInputType.number,
-  //             decoration:
-  //                 const InputDecoration(hintText: "Pressao (exemplo 12/8)"),
-  //           ),
-  //           actions: [
-  //             TextButton(
-  //               onPressed: () async {
-  //                 String pressao = controller.text;
-  //                 await usuarioService.setListaPressao(user.email!, pressao);
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: const Text('Salvar'),
-  //             ),
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: const Text('Cancelar'),
-  //             ),
-  //           ],
-  //         );
-  //       });
-  // }
+    } catch (e) {
+      debugPrint('Erro ao remover pressão: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao remover pressão')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: const AppBarWidget(titulo: 'Aferições de Pressão', rota: '/home'),
-        body: StreamBuilder<List<Map<String, dynamic>>>(
-          stream: usuarioService.getListaPressao(user.email!),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasError) {
-              return const Center(child: Text('Erro ao carregar dados'));
-            }
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(
-                  child: Text('Nenhuma aferição de pressão encontrada'));
-            }
-      
-            List<Map<String, dynamic>> pressaoList = snapshot.data!;
-      
-            return ListView.builder(
-              itemCount: pressaoList.length,
-              itemBuilder: (context, index) {
-                var pressaoData = pressaoList[index];
-                return Card(
-                  margin: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Pressão: ${pressaoData['pressao']}',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      'Data: ${pressaoData['timestamp']}',
-                    ),
-                    trailing: Text(
-                      '${pressaoData['classification']}',
-                      style: TextStyle(
-                        color: _getClassificationColor(pressaoData['classification']),
-                        fontWeight: FontWeight.bold,
-                      ),
+      appBar: const AppBarWidget(titulo: 'Aferições de Pressão', rota: '/home'),
+      body: StreamBuilder<List<Map<String, dynamic>>>(
+        stream: usuarioService.getListaPressao(user.email!),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text('Erro ao carregar dados'));
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+                child: Text('Nenhuma aferição de pressão encontrada'));
+          }
+
+          List<Map<String, dynamic>> pressaoList = snapshot.data!;
+
+          return ListView.builder(
+            itemCount: pressaoList.length,
+            itemBuilder: (context, index) {
+              var pressaoData = pressaoList[index];
+              return Card(
+                margin: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  title: Text(
+                    'Pressão: ${pressaoData['pressao']}',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    'Data: ${(pressaoData['timestamp'] as DateTime).toIso8601String()}',
+                  ),
+                  trailing: Text(
+                    '${pressaoData['classification']}',
+                    style: TextStyle(
+                      color: _getClassificationColor(
+                          pressaoData['classification']),
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              },
-            );
-          },
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(24),
-          child: FloatingActionButton(
-            onPressed: () {
-              _addPressao();
+                  onLongPress: () async {
+                    print('Long press detected on: ${pressaoData['pressao']}');
+                    try {
+                      await _removePressao(pressaoData);
+                      print('Pressão removed: ${pressaoData['pressao']}');
+                    } catch (e) {
+                      print('Erro ao remover pressão: $e');
+                    }
+                  },
+                ),
+              );
             },
-            elevation: 0,
-            shape: const CircleBorder(),
-            child: const Icon(Icons.add, color: Colors.black),
-          ),
+          );
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(24),
+        child: FloatingActionButton(
+          onPressed: () {
+            _addPressao();
+          },
+          elevation: 0,
+          shape: const CircleBorder(),
+          child: const Icon(Icons.add, color: Colors.black),
         ),
+      ),
     );
   }
 }

@@ -65,6 +65,21 @@ class _PesoPageState extends State<PesoPage> {
         });
   }
 
+  Future<void> _removePeso(Map<String, dynamic> pesoData) async {
+    try {
+      debugPrint('Removing peso data: $pesoData');
+      await usuarioService.removePeso(user.email!, pesoData);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Peso removido com sucesso')),
+      );
+    } catch (e) {
+      debugPrint('Erro ao remover peso: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao remover peso')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,12 +108,21 @@ class _PesoPageState extends State<PesoPage> {
                 margin: const EdgeInsets.all(8.0),
                 child: ListTile(
                   title: Text(
-                    'Peso: ${pesoData['peso']} kg',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    '${pesoData['peso']}kg',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    'Data: ${pesoData['timestamp']}',
+                    'Data: ${(pesoData['timestamp'] as DateTime).toIso8601String()}',
                   ),
+                  onLongPress: () async {
+                    print('Long press detected on: ${pesoData['peso']}');
+                    try {
+                      await _removePeso(pesoData);
+                      print('Peso removed: ${pesoData['peso']}');
+                    } catch (e) {
+                      print('Erro ao remover peso: $e');
+                    }
+                  },
                 ),
               );
             },

@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
-// import 'package:flutter/material.dart';
 
 class UsuarioService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-
 
   //funçõs para nome
 
@@ -16,7 +15,8 @@ class UsuarioService {
         .doc(user.email)
         .set({'nome': nome}, SetOptions(merge: true));
   }
-Stream<String?> getNome(String documentId) {
+
+  Stream<String?> getNome(String documentId) {
     return _db
         .collection('Usuarios')
         .doc(documentId)
@@ -25,7 +25,6 @@ Stream<String?> getNome(String documentId) {
       return snapshot.data()?['nome'] as String?;
     });
   }
-
 
   // funções para pressao
 
@@ -132,6 +131,30 @@ Stream<String?> getNome(String documentId) {
     });
   }
 
+  Future<void> removePressao(
+      String documentId, Map<String, dynamic> pressaoData) async {
+    debugPrint('Removing pressure data: $pressaoData');
+    DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
+
+    try {
+      // Ensure the timestamp is a string in ISO 8601 format
+      pressaoData['timestamp'] =
+          (pressaoData['timestamp'] as DateTime).toIso8601String();
+
+      await docRef.update({
+        'pressao': FieldValue.arrayRemove([
+          {
+            'pressao': pressaoData['pressao'],
+            'timestamp': pressaoData['timestamp'],
+            'classification': pressaoData['classification']
+          }
+        ])
+      });
+      debugPrint('Pressão successfully removed');
+    } catch (error) {
+      debugPrint('Erro ao remover pressão: $error');
+    }
+  }
 
   // funções para glicemia
 
@@ -182,7 +205,7 @@ Stream<String?> getNome(String documentId) {
     }
   }
 
-Stream<String> getUltimaGlicemia(String documentID) {
+  Stream<String> getUltimaGlicemia(String documentID) {
     return _db
         .collection('Usuarios')
         .doc(documentID)
@@ -203,7 +226,7 @@ Stream<String> getUltimaGlicemia(String documentID) {
     });
   }
 
-Stream<List<Map<String, dynamic>>> getListaGlicemia(String documentId) {
+  Stream<List<Map<String, dynamic>>> getListaGlicemia(String documentId) {
     return _db
         .collection('Usuarios')
         .doc(documentId)
@@ -231,12 +254,37 @@ Stream<List<Map<String, dynamic>>> getListaGlicemia(String documentId) {
     });
   }
 
-Stream<String> getGlicemia(String documentId) {
+  Stream<String> getGlicemia(String documentId) {
     return _db
         .collection('Usuarios')
         .doc(documentId)
         .snapshots()
         .map((snapshot) => snapshot.data()?['glicemia'] as String);
+  }
+
+  Future<void> removeGlicemia(
+      String documentId, Map<String, dynamic> glicemiaData) async {
+    debugPrint('Removing glicemia data: $glicemiaData');
+    DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
+
+    try {
+      // Ensure the timestamp is a string in ISO 8601 format
+      glicemiaData['timestamp'] =
+          (glicemiaData['timestamp'] as DateTime).toIso8601String();
+
+      await docRef.update({
+        'glicemia': FieldValue.arrayRemove([
+          {
+            'glicemia': glicemiaData['glicemia'],
+            'timestamp': glicemiaData['timestamp'],
+            'classification': glicemiaData['classification']
+          }
+        ])
+      });
+      debugPrint('Glicemia successfully removed');
+    } catch (error) {
+      debugPrint('Erro ao remover pressão: $error');
+    }
   }
 
   //funções para altura e peso
@@ -288,7 +336,7 @@ Stream<String> getGlicemia(String documentId) {
     }
   }
 
-Stream<String> getAltura(String documentId) {
+  Stream<String> getAltura(String documentId) {
     return _db
         .collection('Usuarios')
         .doc(documentId)
@@ -321,8 +369,8 @@ Stream<String> getAltura(String documentId) {
       },
     );
   }
- 
- Stream<String> getUltimoPeso(String documentID) {
+
+  Stream<String> getUltimoPeso(String documentID) {
     return _db
         .collection('Usuarios')
         .doc(documentID)
@@ -374,7 +422,30 @@ Stream<String> getAltura(String documentId) {
     });
   }
 
- 
+  Future<void> removePeso(
+      String documentId, Map<String, dynamic> pesoData) async {
+    debugPrint('Removing peso data: $pesoData');
+    DocumentReference docRef = _db.collection('Usuarios').doc(documentId);
+
+    try {
+      // Ensure the timestamp is a string in ISO 8601 format
+      pesoData['timestamp'] =
+          (pesoData['timestamp'] as DateTime).toIso8601String();
+
+      await docRef.update({
+        'peso': FieldValue.arrayRemove([
+          {
+            'peso': pesoData['peso'],
+            'timestamp': pesoData['timestamp'],
+          }
+        ])
+      });
+      debugPrint('Peso successfully removed');
+    } catch (error) {
+      debugPrint('Erro ao remover pressão: $error');
+    }
+  }
+
   Stream<String> getIMC(String documentId) {
     Stream<double> alturaStream = getAltura(documentId).map((alturaString) {
       alturaString = alturaString.replaceAll('m', '').trim();

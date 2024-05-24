@@ -62,66 +62,90 @@ class _GlicemiaPageState extends State<GlicemiaPage> {
           );
         });
   }
+Future<void> _removeGlicemia(Map<String, dynamic> glicemiaData) async {
+    try {
+      debugPrint('Removing pressure data: $glicemiaData');
+      await usuarioService.removeGlicemia(user.email!, glicemiaData);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Glicemia removida com sucesso')),
+      );
+    } catch (e) {
+      debugPrint('Erro ao remover glicemia: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao remover glicemia')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: const AppBarWidget(titulo: 'Aferições de Glicemia', rota: '/home'),
-        body: StreamBuilder<List<Map<String, dynamic>>>(
-          stream: usuarioService.getListaGlicemia(user.email!),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasError) {
-              return const Center(child: Text('Erro ao carregar dados'));
-            }
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(
-                  child: Text('Nenhuma aferição de glicemia encontrada'));
-            }
-      
-            List<Map<String, dynamic>> glicemiaList = snapshot.data!;
-      
-            return ListView.builder(
-              itemCount: glicemiaList.length,
-              itemBuilder: (context, index) {
-                var glicemiaData = glicemiaList[index];
-                return Card(
-                  margin: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text(
-                      'Glicemia: ${glicemiaData['glicemia']}mg/dL',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      'Data: ${glicemiaData['timestamp']}',
-                    ),
-                    trailing: Text(
-                      '${glicemiaData['classification']}',
-                      style: TextStyle(
-                        color: _getClassificationColor(glicemiaData['classification']),
-                        fontWeight: FontWeight.bold,
-                      ),
+      appBar: const AppBarWidget(titulo: 'Aferições de Glicemia', rota: '/home'),
+      body: StreamBuilder<List<Map<String, dynamic>>>(
+        stream: usuarioService.getListaGlicemia(user.email!),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text('Erro ao carregar dados'));
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+                child: Text('Nenhuma aferição de glicemia encontrada'));
+          }
+
+          List<Map<String, dynamic>> glicemiaList = snapshot.data!;
+
+          return ListView.builder(
+            itemCount: glicemiaList.length,
+            itemBuilder: (context, index) {
+              var glicemiaData = glicemiaList[index];
+              return Card(
+                margin: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  title: Text(
+                    '${glicemiaData['glicemia']}mg/dL',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    'Data: ${(glicemiaData['timestamp'] as DateTime).toIso8601String()}',
+                  ),
+                  trailing: Text(
+                    '${glicemiaData['classification']}',
+                    style: TextStyle(
+                      color: _getClassificationColor(
+                          glicemiaData['classification']),
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                );
-              },
-            );
-          },
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.all(24),
-          child: FloatingActionButton(
-            onPressed: () {
-              _addGlicemia();
+                  onLongPress: () async {
+                    print('Long press detected on: ${glicemiaData['glicemia']}');
+                    try {
+                      await _removeGlicemia(glicemiaData);
+                      print('Glicemia removed: ${glicemiaData['glicemia']}');
+                    } catch (e) {
+                      print('Erro ao remover glicemia: $e');
+                    }
+                  },
+                ),
+              );
             },
-            elevation: 0,
-            shape: const CircleBorder(),
-            child: const Icon(Icons.add, color: Colors.black),
-          ),
+          );
+        },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.all(24),
+        child: FloatingActionButton(
+          onPressed: () {
+            _addGlicemia();
+          },
+          elevation: 0,
+          shape: const CircleBorder(),
+          child: const Icon(Icons.add, color: Colors.black),
         ),
+      ),
     );
   }
 }
