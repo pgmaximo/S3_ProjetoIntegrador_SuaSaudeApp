@@ -2,6 +2,9 @@ import 'package:teste_firebase/pages/TelaCadastro/auth_page.dart';
 import 'package:teste_firebase/pages/TelaDadosHome/glicemia_page.dart';
 import 'package:teste_firebase/pages/TelaDadosHome/peso_page.dart';
 import 'package:teste_firebase/pages/TelaDadosHome/pressao_page.dart';
+import 'package:teste_firebase/pages/TelaHistoricoExames/add_exames_page.dart';
+import 'package:teste_firebase/pages/TelaHistoricoExames/exames_realizados_page.dart';
+import 'package:teste_firebase/pages/TelaHistoricoExames/historico_exames_page.dart';
 import 'pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/components/consulta_hive.dart';
@@ -39,4 +42,10 @@ Map<String, Widget Function(BuildContext context)> rotas = {
 
   //Rota para pagina de ler pdf (pagina teste será removida/alterada depois)
   '/lerpdf_page' : (context) => const LerPdfPage(),
+
+  // Rotas para paginas de Exames
+  '/historico_exames_page' : (context) => const HistoricoExamesPage(),
+  '/exames_realizados_page' : (context) => const ExamesRealizadosPage(),
+  '/add_exames_page' : (context) => const AddExamesPage(),
+
 };
