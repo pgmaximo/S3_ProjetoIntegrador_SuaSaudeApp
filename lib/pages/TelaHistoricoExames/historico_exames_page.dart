@@ -19,8 +19,7 @@ class HistoricoExamesPage extends StatelessWidget {
         children: [
           Expanded(
             child: ValueListenableBuilder(
-              valueListenable:
-                  Hive.box<ExamesHive>('examesBox').listenable(),
+              valueListenable: Hive.box<ExamesHive>('examesBox').listenable(),
               builder: (context, Box<ExamesHive> box, _) {
                 if (box.values.isEmpty) {
                   return const Center(
@@ -63,7 +62,15 @@ class HistoricoExamesPage extends StatelessWidget {
                       },
                       child: ListTile(
                         title: Text(exame.exame),
-                        subtitle: Text('Data: ${exame.data}, Valor de Referência: ${exame.valorRef}'),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Data: ${exame.data}'),
+                            Text('Valor de Referência: ${exame.valorRef}'),
+                            Text('Resultado: ${exame.resultado}'),
+                            _compararResultado(exame.valorRef, exame.resultado),
+                          ],
+                        ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
@@ -127,5 +134,34 @@ class HistoricoExamesPage extends StatelessWidget {
   void removeExame(int index) {
     final box = Hive.box<ExamesHive>('examesBox');
     box.deleteAt(index);
+  }
+
+  Widget _compararResultado(String valorRef, String resultado) {
+    final resultadoDouble = double.tryParse(resultado);
+    final valorRefDouble = double.tryParse(valorRef);
+
+    if (resultadoDouble == null || valorRefDouble == null) {
+      return const Text(
+        'Valores inválidos para comparação.',
+        style: TextStyle(color: Colors.red),
+      );
+    }
+
+    if (resultadoDouble < valorRefDouble) {
+      return const Text(
+        'Resultado abaixo do valor de referência.',
+        style: TextStyle(color: Colors.orange),
+      );
+    } else if (resultadoDouble > valorRefDouble) {
+      return const Text(
+        'Resultado acima do valor de referência.',
+        style: TextStyle(color: Colors.red),
+      );
+    } else {
+      return const Text(
+        'Resultado dentro do valor de referência.',
+        style: TextStyle(color: Colors.green),
+      );
+    }
   }
 }

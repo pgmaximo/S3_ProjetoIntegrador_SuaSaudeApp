@@ -14,26 +14,29 @@ class AddExamesPage extends StatefulWidget {
 
 class _AddExamesPageState extends State<AddExamesPage> {
   final ExameService exameService = ExameService();
-  String? exameSelec;
-  List<String> nomeExames = [];
-  List<String> nomeExamesFiltrado = [];
+  Exame? exameSelec;
+  List<Exame> nomeExames = [];
+  List<Exame> nomeExamesFiltrado = [];
   TextEditingController controleBusca = TextEditingController();
   DateTime? dataSelec;
   TextEditingController valorRefController = TextEditingController();
+  TextEditingController resultadoController = TextEditingController();
+  String comparacaoResultado = "";
 
   @override
   void initState() {
     super.initState();
-    exameService.getExameNames().listen((names) {
+    exameService.getExames().listen((exames) {
       setState(() {
-        nomeExames = names;
-        nomeExamesFiltrado = names;
+        nomeExames = exames;
+        nomeExamesFiltrado = exames;
         if (nomeExames.isNotEmpty) {
           exameSelec = nomeExames.first;
+          valorRefController.text = exameSelec!.referencia;
         }
       });
     }, onError: (error) {
-      print("Ocorreu um erro ao carregar os nomes dos exames: $error");
+      print("Ocorreu um erro ao carregar os exames: $error");
     });
 
     controleBusca.addListener(() {
@@ -42,32 +45,42 @@ class _AddExamesPageState extends State<AddExamesPage> {
   }
 
   void filterSearchResults(String query) {
-    List<String> dummyListData = nomeExames
-        .where((item) => item.toLowerCase().contains(query.toLowerCase()))
+    List<Exame> dummyListData = nomeExames
+        .where((item) => item.exame.toLowerCase().contains(query.toLowerCase()))
         .toList();
     setState(() {
       nomeExamesFiltrado = dummyListData;
-      exameSelec = dummyListData.contains(exameSelec) ? exameSelec : null;
+      if (!dummyListData.contains(exameSelec)) {
+        exameSelec = null;
+        valorRefController.clear();
+      }
     });
   }
 
   void saveExame() async {
-  final box = Hive.box<ExamesHive>('examesBox');
-  final novoExame = ExamesHive(
-    exame: exameSelec ?? "Nome padrão",
-    data: dataSelec != null ? DateFormat('dd/MM/yyyy').format(dataSelec!) : "Data não definida",
-    valorRef: valorRefController.text,
-  );
-  await box.add(novoExame);
+    final box = Hive.box<ExamesHive>('examesBox');
+    final novoExame = ExamesHive(
+      exame: exameSelec?.exame ?? "Nome padrão",
+      data: dataSelec != null ? DateFormat('dd/MM/yyyy').format(dataSelec!) : "Data não definida",
+      valorRef: valorRefController.text,
+      resultado: resultadoController.text,
+    );
+    await box.add(novoExame);
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text("Exame salvo com sucesso!"))
-  );
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Exame salvo com sucesso!"))
+    );
 
-  // Navega para a página de histórico de exames após salvar
-  Navigator.pushReplacementNamed(context, '/historico_exames_page');
-}
+    Navigator.pushReplacementNamed(context, '/historico_exames_page');
+  }
 
+  void compararResultado() {
+    if (exameSelec != null) {
+      setState(() {
+        comparacaoResultado = exameService.compareValues(valorRefController.text, resultadoController.text);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,20 +105,25 @@ class _AddExamesPageState extends State<AddExamesPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    DropdownButton<String>(
+                    DropdownButton<Exame>(
                       value: exameSelec,
                       hint: const Text("Selecione um Exame"),
                       isExpanded: true,
-                      onChanged: (String? newValue) {
+                      onChanged: (Exame? newValue) {
                         setState(() {
                           exameSelec = newValue;
+                          if (exameSelec != null) {
+                            valorRefController.text = exameSelec!.referencia;
+                          } else {
+                            valorRefController.clear();
+                          }
                         });
                       },
                       items: nomeExamesFiltrado
-                          .map<DropdownMenuItem<String>>((String name) {
-                        return DropdownMenuItem<String>(
-                          value: name,
-                          child: Text(name),
+                          .map<DropdownMenuItem<Exame>>((Exame exame) {
+                        return DropdownMenuItem<Exame>(
+                          value: exame,
+                          child: Text(exame.exame),
                         );
                       }).toList(),
                     ),
@@ -134,6 +152,26 @@ class _AddExamesPageState extends State<AddExamesPage> {
                       controller: valorRefController,
                       decoration: const InputDecoration(
                         labelText: 'Valor de Referência',
+                      ),
+                      readOnly: true,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: resultadoController,
+                      decoration: const InputDecoration(
+                        labelText: 'Resultado',
+                      ),
+                      onChanged: (text) => compararResultado(),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      comparacaoResultado,
+                      style: TextStyle(
+                        color: comparacaoResultado.contains("dentro")
+                            ? Colors.green
+                            : comparacaoResultado.contains("acima")
+                                ? Colors.red
+                                : Colors.orange,
                       ),
                     ),
                   ],
@@ -168,6 +206,4 @@ class _AddExamesPageState extends State<AddExamesPage> {
       ),
     );
   }
-  
 }
-

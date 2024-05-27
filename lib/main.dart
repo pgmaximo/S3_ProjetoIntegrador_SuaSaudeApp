@@ -3,12 +3,8 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:teste_firebase/components/consulta_hive.dart';
 import 'package:teste_firebase/components/exames_hive.dart';
 import 'package:teste_firebase/components/medicamento_hive.dart';
-import 'package:teste_firebase/pages/TelaCadastro/auth_page.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:teste_firebase/pages/TelaConsulta/specialty_consulta.dart';
-import 'package:teste_firebase/pages/TelaHistoricoExames/add_exames_page.dart';
 import 'package:teste_firebase/pages/TelaHistoricoExames/historico_exames_page.dart';
-import 'package:teste_firebase/pages/TelaMedicamento/add_remedio_page.dart';
 import 'package:teste_firebase/routes.dart';
 import 'firebase_options.dart';
 

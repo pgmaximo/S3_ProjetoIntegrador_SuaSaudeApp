@@ -8,7 +8,7 @@ part of 'exames_hive.dart';
 
 class ExamesHiveAdapter extends TypeAdapter<ExamesHive> {
   @override
-  final int typeId = 2;
+  final int typeId = 3;
 
   @override
   ExamesHive read(BinaryReader reader) {
@@ -20,19 +20,22 @@ class ExamesHiveAdapter extends TypeAdapter<ExamesHive> {
       exame: fields[0] as String,
       data: fields[1] as String,
       valorRef: fields[2] as String,
+      resultado: fields[3] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, ExamesHive obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
       ..write(obj.exame)
       ..writeByte(1)
       ..write(obj.data)
       ..writeByte(2)
-      ..write(obj.valorRef);
+      ..write(obj.valorRef)
+      ..writeByte(3)
+      ..write(obj.resultado);
   }
 
   @override
