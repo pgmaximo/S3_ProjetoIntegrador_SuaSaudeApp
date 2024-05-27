@@ -40,6 +40,7 @@ class _GlicemiaPageState extends State<GlicemiaPage> {
           return AlertDialog(
             title: const Text('Inserir glicemia'),
             content: TextField(
+              key: const Key("addGlicemiaField"),
               controller: controller,
               keyboardType: TextInputType.number,
               decoration:
@@ -47,6 +48,7 @@ class _GlicemiaPageState extends State<GlicemiaPage> {
             ),
             actions: [
               TextButton(
+                key: const Key("salvarButton"),
                 onPressed: () async {
                   String glicemia = controller.text;
                   await usuarioService.setGlicemia(user.email!, glicemia);
@@ -130,6 +132,7 @@ class _GlicemiaPageState extends State<GlicemiaPage> {
                 margin: const EdgeInsets.all(8.0),
                 child: ListTile(
                   title: Text(
+                    key: Key("glicemiaListText_$index"),
                     '${glicemiaData['glicemia']}mg/dL',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
@@ -163,6 +166,7 @@ class _GlicemiaPageState extends State<GlicemiaPage> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(24),
         child: FloatingActionButton(
+          key: const Key("botaoAddGlicemia"),
           onPressed: () {
             _addGlicemia();
           },

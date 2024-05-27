@@ -34,6 +34,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
       centerTitle: true,
       automaticallyImplyLeading: false,
       leading: IconButton(
+        key: const Key("appbarButton"),
         onPressed: widget.logout ? 
           signUserOut : 
           () => widget.rota == '/home' ?

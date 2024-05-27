@@ -45,6 +45,7 @@ class _HomePageState extends State<HomePage> {
                   } else {
                     String displayName = snapshot.data ?? user.email!;
                     return Text(
+                      key: const Key("boasvindas"),
                       "Bem vindo $displayName!",
                       style: const TextStyle(fontSize: 20),
                     );
@@ -63,6 +64,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       // quadrado pressao
                       BoxInfo(
+                        key: const Key("histPressaoButton"),
                         textoTitulo: "Ultima aferição de pressão",
                         documentId: user.email!,
                         campo: 'pressao',
@@ -70,6 +72,7 @@ class _HomePageState extends State<HomePage> {
 
                       // quadrado Peso e altura
                       BoxInfo(
+                        key: const Key("histPesoButton"),
                         textoTitulo: "Peso e altura",
                         documentId: user.email!,
                         campo: "altura",
@@ -83,6 +86,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       // quadrado glicemia
                       BoxInfo(
+                        key: const Key("histGlicemiaButton"),
                         textoTitulo: "Ultima aferição de glicemia",
                         documentId: user.email!,
                         campo: "glicemia",

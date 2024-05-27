@@ -76,6 +76,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 // texto placeholder, mudar pra um logo depois
                 const Text("YE Gestão de Saúde",
+                key: Key("tituloText"),
                     style:
                         TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
 
@@ -177,12 +178,13 @@ class _LoginPageState extends State<LoginPage> {
                       imgPath: "lib/images/google_logo.png"),
 
                   const SizedBox(width: 25),
-
-                  SquareTile(
-                    key: const Key("loginfacebook"),
-                    onTap: () => {},
-                    imgPath: "lib/images/facebook_logo.png",
-                  )
+                  
+                  //facebook
+                  // SquareTile(
+                  //   key: const Key("loginfacebook"),
+                  //   onTap: () => {},
+                  //   imgPath: "lib/images/facebook_logo.png",
+                  // )
                 ]),
 
                 const SizedBox(height: 50),

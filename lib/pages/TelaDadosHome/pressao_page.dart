@@ -43,6 +43,7 @@ class _PressaoPageState extends State<PressaoPage> {
         return AlertDialog(
           title: const Text('Inserir pressao'),
           content: TextField(
+            key: const Key("addPressaoField"),
             controller: controller,
             keyboardType: TextInputType.number,
             decoration:
@@ -50,6 +51,7 @@ class _PressaoPageState extends State<PressaoPage> {
           ),
           actions: [
             TextButton(
+              key: const Key("salvarButton"),
               onPressed: () async {
                 String pressao = controller.text;
                 try {
@@ -84,7 +86,7 @@ class _PressaoPageState extends State<PressaoPage> {
                 TextButton(
                     onPressed: () async {
                       try {
-                        // debugPrint('Removing pressure data: $pressaoData');
+                        debugPrint('Removing pressure data: $pressaoData');
                         await usuarioService.removePressao(
                             user.email!, pressaoData);
                         Navigator.of(context).pop();
@@ -93,14 +95,14 @@ class _PressaoPageState extends State<PressaoPage> {
                               content: Text('Pressão removida com sucesso')),
                         );
                       } catch (e) {
-                        // debugPrint('Erro ao remover pressão: $e');
+                        debugPrint('Erro ao remover pressão: $e');
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                               content: Text('Erro ao remover pressão')),
                         );
                       }
                     },
-                    child: const Text('Remover')),
+                    child: const Text('Remover', key: Key("removerPopup"))),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -139,6 +141,7 @@ class _PressaoPageState extends State<PressaoPage> {
                 margin: const EdgeInsets.all(8.0),
                 child: ListTile(
                   title: Text(
+                    key: Key("pressaoListText_$index"),
                     'Pressão: ${pressaoData['pressao']}',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
@@ -154,12 +157,10 @@ class _PressaoPageState extends State<PressaoPage> {
                     ),
                   ),
                   onLongPress: () async {
-                    // print('Long press on: ${pressaoData['pressao']}');
                     try {
                       await _removePressao(pressaoData);
-                      // print('Pressão removed: ${pressaoData['pressao']}');
                     } catch (e) {
-                      // print('Erro ao remover pressão: $e');
+                      // Handle error
                     }
                   },
                 ),
@@ -172,6 +173,7 @@ class _PressaoPageState extends State<PressaoPage> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(24),
         child: FloatingActionButton(
+          key: const Key("botaoAddPressao"),
           onPressed: () {
             _addPressao();
           },

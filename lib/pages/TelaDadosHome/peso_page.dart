@@ -29,6 +29,7 @@ class _PesoPageState extends State<PesoPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
+                  key: const Key("addPesoField"),
                   controller: pesoController,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(hintText: "Peso em kg"),
@@ -45,6 +46,7 @@ class _PesoPageState extends State<PesoPage> {
             ),
             actions: [
               TextButton(
+                key: const Key("salvarButton"),
                 onPressed: () async {
                   double? peso = double.tryParse(pesoController.text);
                   await usuarioService.setPeso(user.email!, peso!);
@@ -131,6 +133,7 @@ class _PesoPageState extends State<PesoPage> {
                 margin: const EdgeInsets.all(8.0),
                 child: ListTile(
                   title: Text(
+                    key: Key("pesoListText_$index"),
                     '${pesoData['peso']}kg',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
@@ -156,6 +159,7 @@ class _PesoPageState extends State<PesoPage> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(24),
         child: FloatingActionButton(
+          key: const Key("botaoAddPeso"),
           onPressed: () {
             _addPeso();
           },
