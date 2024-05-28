@@ -21,13 +21,14 @@ class ExamesHiveAdapter extends TypeAdapter<ExamesHive> {
       data: fields[1] as String,
       valorRef: fields[2] as String,
       resultado: fields[3] as String,
+      valorNumerico: fields[4] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ExamesHive obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.exame)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class ExamesHiveAdapter extends TypeAdapter<ExamesHive> {
       ..writeByte(2)
       ..write(obj.valorRef)
       ..writeByte(3)
-      ..write(obj.resultado);
+      ..write(obj.resultado)
+      ..writeByte(4)
+      ..write(obj.valorNumerico);
   }
 
   @override

@@ -1,56 +1,69 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 
-class Exame {
-  final String exame;
-  final String referencia;
-
-  Exame({required this.exame, required this.referencia});
-}
-
 class ExameService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Stream<List<Exame>> getExames() {
-    Stream<List<Exame>> examesStream = _db.collection('Exames')
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => Exame(
-            exame: doc.data()['exame'] as String,
-            referencia: doc.data()['referencia'] as String,
-        )).toList());
+  Stream<List<Map<String, String>>> getExameNamesWithReferences() {
+    Stream<List<Map<String, String>>> examesStream = _db.collection('Exames')
+      .snapshots()
+      .map((snapshot) => snapshot.docs.map((doc) {
+        return {
+          'exame': doc.data()['exame'] as String,
+          'referencia': doc.data()['referencia'] as String
+        };
+      }).toList());
 
-    Stream<List<Exame>> examesLowercaseStream = _db.collection('exames')
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => Exame(
-            exame: doc.data()['exame'] as String,
-            referencia: doc.data()['referencia'] as String,
-        )).toList());
+    Stream<List<Map<String, String>>> examesLowercaseStream = _db.collection('exames')
+      .snapshots()
+      .map((snapshot) => snapshot.docs.map((doc) {
+        return {
+          'exame': doc.data()['exame'] as String,
+          'referencia': doc.data()['referencia'] as String
+        };
+      }).toList());
 
     return CombineLatestStream.combine2(
       examesStream,
       examesLowercaseStream,
-      (List<Exame> exames, List<Exame> examesLowercase) {
-        final allExames = {...exames, ...examesLowercase}.toList();
-        return allExames;
+      (List<Map<String, String>> exames, List<Map<String, String>> examesLowercase) {
+        final allExames = exames + examesLowercase;
+        final uniqueExames = <String, String>{};
+
+        for (var exame in allExames) {
+          uniqueExames[exame['exame']!] = exame['referencia']!;
+        }
+
+        return uniqueExames.entries.map((entry) {
+          return {
+            'exame': entry.key,
+            'referencia': entry.value,
+          };
+        }).toList();
       },
     );
   }
 
-  int extractNumericValue(String valueString) {
-    final numericString = valueString.replaceAll(RegExp(r'[^0-9]'), '');
-    return int.tryParse(numericString) ?? 0;
+  String? extractNumericValue(String value) {
+    final regex = RegExp(r'\d+(\.\d+)?');
+    final match = regex.firstMatch(value);
+    return match?.group(0);
   }
 
-  String compareValues(String referencia, String resultado) {
-    final int referenciaValue = extractNumericValue(referencia);
-    final int resultadoValue = extractNumericValue(resultado);
+  String interpretExame(String referencia, String resultado) {
+    final valorReferencia = double.tryParse(extractNumericValue(referencia) ?? '');
+    final valorResultado = double.tryParse(resultado);
 
-    if (resultadoValue < referenciaValue) {
-      return 'Resultado abaixo do valor de referência.';
-    } else if (resultadoValue > referenciaValue) {
-      return 'Resultado acima do valor de referência.';
+    if (valorReferencia == null || valorResultado == null) {
+      return "Valores inválidos para comparação";
+    }
+
+    if (valorResultado < valorReferencia) {
+      return "Resultado abaixo do normal";
+    } else if (valorResultado > valorReferencia) {
+      return "Resultado acima do normal";
     } else {
-      return 'Resultado dentro do valor de referência.';
+      return "Resultado dentro do normal";
     }
   }
 }

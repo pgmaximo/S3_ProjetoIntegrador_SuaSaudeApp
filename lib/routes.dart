@@ -45,7 +45,7 @@ Map<String, Widget Function(BuildContext context)> rotas = {
 
   // Rotas para paginas de Exames
   '/historico_exames_page' : (context) => const HistoricoExamesPage(),
-  '/exames_realizados_page' : (context) => const ExamesRealizadosPage(),
+  '/exames_realizados_page' : (context) => const ExamesRealizadosPage(exameTipo: '',),
   '/add_exames_page' : (context) => const AddExamesPage(),
 
 };

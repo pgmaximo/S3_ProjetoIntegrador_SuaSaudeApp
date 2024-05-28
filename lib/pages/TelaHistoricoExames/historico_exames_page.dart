@@ -3,18 +3,21 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/page_button.dart';
 import 'package:teste_firebase/components/exames_hive.dart';
-import 'package:teste_firebase/pages/TelaHistoricoExames/add_exames_page.dart'; // Importe este pacote para formatação de data
+import 'package:teste_firebase/pages/TelaHistoricoExames/add_exames_page.dart';
+import 'package:teste_firebase/pages/TelaHistoricoExames/exames_realizados_page.dart';
 
 class HistoricoExamesPage extends StatelessWidget {
   const HistoricoExamesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: const AppBarWidget(
         titulo: 'Histórico de Exames',
         rota: '/home',
       ),
+
       body: Column(
         children: [
           Expanded(
@@ -26,12 +29,35 @@ class HistoricoExamesPage extends StatelessWidget {
                     child: Text("Nenhum exame realizado."),
                   );
                 }
-                return ListView.separated(
-                  itemCount: box.values.length,
-                  itemBuilder: (context, index) {
-                    ExamesHive exame = box.getAt(index) as ExamesHive;
 
+                // Agrupar exames por tipo
+                final Map<String, List<ExamesHive>> examesPorTipo = {};
+                for (var exame in box.values) {
+                  if (examesPorTipo.containsKey(exame.exame)) {
+                    examesPorTipo[exame.exame]!.add(exame);
+                  } else {
+                    examesPorTipo[exame.exame] = [exame];
+                  }
+                }
+
+                final List<String> tiposExames = examesPorTipo.keys.toList();
+
+                return ListView.separated(
+                  itemCount: tiposExames.length,
+                  itemBuilder: (context, index) {
+                    String tipoExame = tiposExames[index];
                     return InkWell(
+                      onTap: () {
+                        // Navega para a ExamesRealizadosPage ao clicar em um exame
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ExamesRealizadosPage(
+                              exameTipo: tipoExame,
+                            ),
+                          ),
+                        );
+                      },
                       onLongPress: () {
                         // Confirmação de exclusão
                         showDialog(
@@ -39,8 +65,7 @@ class HistoricoExamesPage extends StatelessWidget {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: const Text("Confirmar Exclusão"),
-                              content: const Text(
-                                  "Tem certeza que deseja excluir este exame?"),
+                              content: const Text("Tem certeza que deseja excluir todos os exames deste tipo?"),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -50,7 +75,7 @@ class HistoricoExamesPage extends StatelessWidget {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    removeExame(index);
+                                    removeExamesPorTipo(tipoExame);
                                     Navigator.of(context).pop();
                                   },
                                   child: const Text("Excluir"),
@@ -61,27 +86,17 @@ class HistoricoExamesPage extends StatelessWidget {
                         );
                       },
                       child: ListTile(
-                        title: Text(exame.exame),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Data: ${exame.data}'),
-                            Text('Valor de Referência: ${exame.valorRef}'),
-                            Text('Resultado: ${exame.resultado}'),
-                            _compararResultado(exame.valorRef, exame.resultado),
-                          ],
-                        ),
+                        title: Text(tipoExame),
+                        subtitle: Text('Exames Realizados: ${examesPorTipo[tipoExame]!.length}'),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete),
                           onPressed: () {
-                            // Confirmação de exclusão
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: const Text("Confirmar Exclusão"),
-                                  content: const Text(
-                                      "Tem certeza que deseja excluir este exame?"),
+                                  content: const Text("Tem certeza que deseja excluir todos os exames deste tipo?"),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
@@ -91,7 +106,7 @@ class HistoricoExamesPage extends StatelessWidget {
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        removeExame(index);
+                                        removeExamesPorTipo(tipoExame);
                                         Navigator.of(context).pop();
                                       },
                                       child: const Text("Excluir"),
@@ -131,37 +146,11 @@ class HistoricoExamesPage extends StatelessWidget {
     );
   }
 
-  void removeExame(int index) {
+  void removeExamesPorTipo(String tipoExame) {
     final box = Hive.box<ExamesHive>('examesBox');
-    box.deleteAt(index);
-  }
-
-  Widget _compararResultado(String valorRef, String resultado) {
-    final resultadoDouble = double.tryParse(resultado);
-    final valorRefDouble = double.tryParse(valorRef);
-
-    if (resultadoDouble == null || valorRefDouble == null) {
-      return const Text(
-        'Valores inválidos para comparação.',
-        style: TextStyle(color: Colors.red),
-      );
-    }
-
-    if (resultadoDouble < valorRefDouble) {
-      return const Text(
-        'Resultado abaixo do valor de referência.',
-        style: TextStyle(color: Colors.orange),
-      );
-    } else if (resultadoDouble > valorRefDouble) {
-      return const Text(
-        'Resultado acima do valor de referência.',
-        style: TextStyle(color: Colors.red),
-      );
-    } else {
-      return const Text(
-        'Resultado dentro do valor de referência.',
-        style: TextStyle(color: Colors.green),
-      );
+    final examesParaRemover = box.values.where((exame) => exame.exame == tipoExame).toList();
+    for (var exame in examesParaRemover) {
+      box.delete(exame.key);
     }
   }
 }

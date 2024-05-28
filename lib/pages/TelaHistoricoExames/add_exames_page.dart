@@ -14,29 +14,28 @@ class AddExamesPage extends StatefulWidget {
 
 class _AddExamesPageState extends State<AddExamesPage> {
   final ExameService exameService = ExameService();
-  Exame? exameSelec;
-  List<Exame> nomeExames = [];
-  List<Exame> nomeExamesFiltrado = [];
+  String? exameSelec;
+  String? valorRef;
+  List<Map<String, String>> nomeExames = [];
+  List<Map<String, String>> nomeExamesFiltrado = [];
   TextEditingController controleBusca = TextEditingController();
   DateTime? dataSelec;
-  TextEditingController valorRefController = TextEditingController();
   TextEditingController resultadoController = TextEditingController();
-  String comparacaoResultado = "";
 
   @override
   void initState() {
     super.initState();
-    exameService.getExames().listen((exames) {
+    exameService.getExameNamesWithReferences().listen((namesWithReferences) {
       setState(() {
-        nomeExames = exames;
-        nomeExamesFiltrado = exames;
+        nomeExames = namesWithReferences;
+        nomeExamesFiltrado = nomeExames;
         if (nomeExames.isNotEmpty) {
-          exameSelec = nomeExames.first;
-          valorRefController.text = exameSelec!.referencia;
+          exameSelec = nomeExames.first['exame'];
+          valorRef = nomeExames.first['referencia'];
         }
       });
     }, onError: (error) {
-      print("Ocorreu um erro ao carregar os exames: $error");
+      print("Ocorreu um erro ao carregar os nomes dos exames: $error");
     });
 
     controleBusca.addListener(() {
@@ -45,14 +44,14 @@ class _AddExamesPageState extends State<AddExamesPage> {
   }
 
   void filterSearchResults(String query) {
-    List<Exame> dummyListData = nomeExames
-        .where((item) => item.exame.toLowerCase().contains(query.toLowerCase()))
+    List<Map<String, String>> dummyListData = nomeExames
+        .where((item) => item['exame']!.toLowerCase().contains(query.toLowerCase()))
         .toList();
     setState(() {
       nomeExamesFiltrado = dummyListData;
-      if (!dummyListData.contains(exameSelec)) {
+      if (!dummyListData.any((item) => item['exame'] == exameSelec)) {
         exameSelec = null;
-        valorRefController.clear();
+        valorRef = null;
       }
     });
   }
@@ -60,10 +59,11 @@ class _AddExamesPageState extends State<AddExamesPage> {
   void saveExame() async {
     final box = Hive.box<ExamesHive>('examesBox');
     final novoExame = ExamesHive(
-      exame: exameSelec?.exame ?? "Nome padrão",
+      exame: exameSelec ?? "Nome padrão",
       data: dataSelec != null ? DateFormat('dd/MM/yyyy').format(dataSelec!) : "Data não definida",
-      valorRef: valorRefController.text,
+      valorRef: valorRef ?? "Referência não definida",
       resultado: resultadoController.text,
+      valorNumerico: ExameService().extractNumericValue(resultadoController.text) ?? '0',
     );
     await box.add(novoExame);
 
@@ -72,14 +72,6 @@ class _AddExamesPageState extends State<AddExamesPage> {
     );
 
     Navigator.pushReplacementNamed(context, '/historico_exames_page');
-  }
-
-  void compararResultado() {
-    if (exameSelec != null) {
-      setState(() {
-        comparacaoResultado = exameService.compareValues(valorRefController.text, resultadoController.text);
-      });
-    }
   }
 
   @override
@@ -105,25 +97,22 @@ class _AddExamesPageState extends State<AddExamesPage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    DropdownButton<Exame>(
+                    DropdownButton<String>(
                       value: exameSelec,
                       hint: const Text("Selecione um Exame"),
                       isExpanded: true,
-                      onChanged: (Exame? newValue) {
+                      onChanged: (String? newValue) {
                         setState(() {
                           exameSelec = newValue;
-                          if (exameSelec != null) {
-                            valorRefController.text = exameSelec!.referencia;
-                          } else {
-                            valorRefController.clear();
-                          }
+                          valorRef = nomeExames
+                              .firstWhere((item) => item['exame'] == newValue)['referencia'];
                         });
                       },
                       items: nomeExamesFiltrado
-                          .map<DropdownMenuItem<Exame>>((Exame exame) {
-                        return DropdownMenuItem<Exame>(
-                          value: exame,
-                          child: Text(exame.exame),
+                          .map<DropdownMenuItem<String>>((Map<String, String> item) {
+                        return DropdownMenuItem<String>(
+                          value: item['exame'],
+                          child: Text(item['exame']!),
                         );
                       }).toList(),
                     ),
@@ -148,30 +137,17 @@ class _AddExamesPageState extends State<AddExamesPage> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    TextFormField(
-                      controller: valorRefController,
-                      decoration: const InputDecoration(
-                        labelText: 'Valor de Referência',
+                    Text(
+                      "Valor de Referência: ${valorRef ?? 'Referência não definida'}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold
+                        ),
                       ),
-                      readOnly: true,
-                    ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: resultadoController,
                       decoration: const InputDecoration(
                         labelText: 'Resultado',
-                      ),
-                      onChanged: (text) => compararResultado(),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      comparacaoResultado,
-                      style: TextStyle(
-                        color: comparacaoResultado.contains("dentro")
-                            ? Colors.green
-                            : comparacaoResultado.contains("acima")
-                                ? Colors.red
-                                : Colors.orange,
                       ),
                     ),
                   ],
@@ -187,7 +163,7 @@ class _AddExamesPageState extends State<AddExamesPage> {
               children: [
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pushReplacementNamed(context, '/historico_exames_page');
                   },
                   child: const Text(
                     "Cancelar",

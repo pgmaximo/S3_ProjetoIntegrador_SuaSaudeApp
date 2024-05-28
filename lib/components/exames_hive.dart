@@ -5,21 +5,25 @@ part 'exames_hive.g.dart';
 @HiveType(typeId: 3)
 class ExamesHive extends HiveObject {
   @HiveField(0)
-  final String exame;
+  String exame;
 
   @HiveField(1)
-  final String data;
+  String data;
 
   @HiveField(2)
-  final String valorRef;
+  String valorRef;
 
   @HiveField(3)
-  final String resultado;
+  String resultado;
+
+  @HiveField(4)
+  String? valorNumerico; // Novo campo
 
   ExamesHive({
     required this.exame,
     required this.data,
     required this.valorRef,
     required this.resultado,
+    required this.valorNumerico, // Novo campo
   });
 }
