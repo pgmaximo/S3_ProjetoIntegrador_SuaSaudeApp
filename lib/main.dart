@@ -4,6 +4,7 @@ import 'package:teste_firebase/components/consulta_hive.dart';
 import 'package:teste_firebase/components/exames_hive.dart';
 import 'package:teste_firebase/components/medicamento_hive.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:teste_firebase/pages/TelaCadastro/auth_page.dart';
 import 'package:teste_firebase/pages/home_page.dart';
 import 'package:teste_firebase/routes.dart';
 import 'firebase_options.dart';
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: const AuthPage(),
       routes: rotas,
     );
   }
