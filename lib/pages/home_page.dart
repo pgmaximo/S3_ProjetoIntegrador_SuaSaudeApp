@@ -55,11 +55,59 @@ class _HomePageState extends State<HomePage> {
 
               const SizedBox(height: 50),
 
-              // row com 2 colunas para exibir as 4 informaçoes (pressao glicemia peso imc)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Column(
+              // Responsividade para os BoxInfos
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  if (constraints.maxWidth > 600) {
+                    // Layout para telas largas (duas colunas)
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // quadrado pressao
+                            BoxInfo(
+                              key: const Key("histPressaoButton"),
+                              textoTitulo: "Ultima aferição de pressão",
+                              documentId: user.email!,
+                              campo: 'pressao',
+                            ),
+
+                            // quadrado Peso e altura
+                            BoxInfo(
+                              key: const Key("histPesoButton"),
+                              textoTitulo: "Peso e altura",
+                              documentId: user.email!,
+                              campo: "altura",
+                            ),
+                          ],
+                        ),
+
+                        // coluna para exibir glicemia e IMC
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            BoxInfo(
+                              key: const Key("histGlicemiaButton"),
+                              textoTitulo: "Ultima aferição de glicemia",
+                              documentId: user.email!,
+                              campo: "glicemia",
+                            ),
+
+                            // quadrado IMC
+                            BoxInfo(
+                              textoTitulo: "IMC",
+                              documentId: user.email!,
+                              campo: "IMC",
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  } else {
+                    // Layout para telas estreitas (uma coluna)
+                    return Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         // quadrado pressao
@@ -77,12 +125,7 @@ class _HomePageState extends State<HomePage> {
                           documentId: user.email!,
                           campo: "altura",
                         ),
-                      ]),
 
-                  // coluna para exibir glicemia e IMC
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
                         BoxInfo(
                           key: const Key("histGlicemiaButton"),
                           textoTitulo: "Ultima aferição de glicemia",
@@ -96,17 +139,13 @@ class _HomePageState extends State<HomePage> {
                           documentId: user.email!,
                           campo: "IMC",
                         ),
-                      ]),
-                ],
+                      ],
+                    );
+                  }
+                },
               ),
 
-              const SizedBox(
-                height: 20,
-              ),
-
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
 
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -123,7 +162,6 @@ class _HomePageState extends State<HomePage> {
                             },
                             child: const Text('Consultas')),
                       ),
-                      // const SizedBox(height: 20),
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: ElevatedButton(
@@ -132,7 +170,6 @@ class _HomePageState extends State<HomePage> {
                             },
                             child: const Text('Remédios')),
                       ),
-                      // const SizedBox(height: 50,),
                       Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: ElevatedButton(
@@ -142,15 +179,6 @@ class _HomePageState extends State<HomePage> {
                             },
                             child: const Text('Exames')),
                       ),
-                      // const SizedBox(height: 50,),
-                      // Padding(
-                      //   padding: const EdgeInsets.all(15.0),
-                      //   child: ElevatedButton(
-                      //       onPressed: () {
-                      //         Navigator.pushNamed(context, '/lerpdf_page');
-                      //       },
-                      //       child: const Text('TESTE PDF')),
-                      // ),
                     ],
                   ),
                 ],

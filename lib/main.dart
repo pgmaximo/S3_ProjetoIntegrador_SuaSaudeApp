@@ -5,10 +5,8 @@ import 'package:teste_firebase/components/exames_hive.dart';
 import 'package:teste_firebase/components/medicamento_hive.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:teste_firebase/pages/TelaCadastro/auth_page.dart';
-import 'package:teste_firebase/pages/home_page.dart';
 import 'package:teste_firebase/routes.dart';
 import 'firebase_options.dart';
-import 'package:flutter_driver/driver_extension.dart';
 
 void main() async {
   // descomentar para rodar testes
