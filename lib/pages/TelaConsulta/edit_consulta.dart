@@ -1,25 +1,23 @@
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_picker_web/image_picker_web.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/consulta_hive.dart';
 
-class NovaConsulta extends StatefulWidget {
-  final ConsultaHive? consulta;
-  final String? especialidade;
+class EditarConsulta extends StatefulWidget {
+  final ConsultaHive consulta;
+  final VoidCallback aoSalvar; 
 
-  const NovaConsulta({super.key, this.consulta, this.especialidade});
+  const EditarConsulta({super.key, required this.consulta, required this.aoSalvar,});
 
   @override
-  State<NovaConsulta> createState() => _NovaConsultaState();
+  State<EditarConsulta> createState() => _EditarConsultaState();
 }
 
-class _NovaConsultaState extends State<NovaConsulta> {
+class _EditarConsultaState extends State<EditarConsulta> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _especialistaController = TextEditingController();
@@ -36,29 +34,32 @@ class _NovaConsultaState extends State<NovaConsulta> {
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    dataSelecionada = widget.consulta?.data ?? now;
+    dataSelecionada = widget.consulta.data;
     horarioSelecionado = TimeOfDay(
-      hour: widget.consulta?.data.hour ?? now.hour,
-      minute: widget.consulta?.data.minute ?? now.minute,
+      hour: widget.consulta.data.hour,
+      minute: widget.consulta.data.minute,
     );
-    retornoSelecionado = widget.consulta?.retorno;
-    _especialistaController.text = widget.consulta?.especialista ?? widget.especialidade ?? '';
-    _descricaoController.text = widget.consulta?.descricao ?? '';
-    _retornoController.text = retornoSelecionado != null ? DateFormat('dd/MM/yyyy').format(retornoSelecionado!) : ''; // Inicializado corretamente
-    _lembreteController.text = widget.consulta?.lembrete ?? '';
-    _imagemEmBytes = widget.consulta?.imagem;
+    retornoSelecionado = widget.consulta.retorno;
+    _especialistaController.text = widget.consulta.especialista;
+    _descricaoController.text = widget.consulta.descricao ?? '';
+    _retornoController.text = retornoSelecionado != null ? DateFormat('dd/MM/yyyy').format(retornoSelecionado!) : '';
+    _lembreteController.text = widget.consulta.lembrete ?? '';
+    _imagemEmBytes = widget.consulta.imagem;
     _updateDateTimeController();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppBarWidget(titulo: "Nova Consulta", rota: '/specialty_consulta'),
+      appBar: AppBarWidget(
+        titulo: "Editar Consulta", 
+        rota: '/detail_consulta',
+        arguments: widget.consulta,
+      ),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -68,7 +69,7 @@ class _NovaConsultaState extends State<NovaConsulta> {
                 validator: (value) => value!.isEmpty ? 'Por favor, insira a especialidade' : null,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 15),
 
               TextFormField(
                 controller: _dateTimeController,
@@ -78,7 +79,7 @@ class _NovaConsultaState extends State<NovaConsulta> {
                 validator: (value) => value!.isEmpty ? 'Por favor, insira a data e o horário' : null,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 15),
 
               TextFormField(
                 controller: _descricaoController,
@@ -86,33 +87,27 @@ class _NovaConsultaState extends State<NovaConsulta> {
                 maxLines: 3,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 15),
 
               TextFormField(
-                controller: _retornoController, // Alterado para o controller de retorno
+                controller: _retornoController,
                 decoration: const InputDecoration(labelText: 'Retorno em'),
-                onTap: _selectReturnDate, // Novo método para selecionar a data de retorno
+                onTap: _selectReturnDate,
+                readOnly: true,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 15),
 
               TextFormField(
                 controller: _lembreteController,
                 decoration: const InputDecoration(labelText: 'Lembrete para agendamento'),
               ),
 
-              const SizedBox(height: 64),
-
-              TextButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(const Color.fromARGB(255, 123, 167, 150)),
-                  fixedSize: WidgetStateProperty.all(const Size.fromWidth(100)),
-                ),
-                onPressed: _pickImage,
-                child: const Text('Adicionar Foto da consulta', style: TextStyle(color: Colors.white)),
-              ),
+              const SizedBox(height: 50),
+              _buildSelectImageButton(),
+              const SizedBox(height: 25),
               _buildPreviewImagem(),
-            ],
+            ]
           ),
         ),
       ),
@@ -139,6 +134,7 @@ class _NovaConsultaState extends State<NovaConsulta> {
     );
   }
 
+
   void _selectReturnDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -149,7 +145,7 @@ class _NovaConsultaState extends State<NovaConsulta> {
     if (picked != null) {
       setState(() {
         retornoSelecionado = picked;
-        _retornoController.text = DateFormat('dd/MM/yyyy').format(picked); // Atualiza o controlador de retorno
+        _retornoController.text = DateFormat('dd/MM/yyyy').format(picked);
       });
     }
   }
@@ -181,28 +177,17 @@ class _NovaConsultaState extends State<NovaConsulta> {
   }
 
   void _saveConsulta() async {
-    final box = await Hive.openBox<ConsultaHive>('consultasBox');
 
-    final consulta = ConsultaHive(
-      especialista: _especialistaController.text,
-      data: dataSelecionada,
-      horario: '${horarioSelecionado.hour}:${horarioSelecionado.minute}',
-      descricao: _descricaoController.text,
-      retorno: retornoSelecionado,
-      lembrete: _lembreteController.text,
-      imagem: _imagemEmBytes,
-    );
+    widget.consulta.especialista = _especialistaController.text;
+    widget.consulta.data = dataSelecionada;
+    widget.consulta.horario = '${horarioSelecionado.hour}:${horarioSelecionado.minute}';
+    widget.consulta.descricao = _descricaoController.text;
+    widget.consulta.retorno = retornoSelecionado;
+    widget.consulta.lembrete = _lembreteController.text;
+    widget.consulta.imagem = _imagemEmBytes;
 
-    if (widget.consulta != null) {
-      await box.put(widget.consulta!.key, consulta);
-    } else {
-      await box.add(consulta);
-    }
-    
-    Navigator.of(context).pushReplacementNamed(
-      '/list_consulta',
-      arguments: _especialistaController.text,
-    );
+    widget.aoSalvar(); 
+    Navigator.of(context).pop();
   }
 
   Future<Uint8List?> pickImage() async {
@@ -219,14 +204,50 @@ class _NovaConsultaState extends State<NovaConsulta> {
     return null;
   }
 
-  Future<void> _pickImage() async {
-    _imagemEmBytes = await pickImage();
-    setState(() {}); 
+  Widget _buildSelectImageButton() {
+    return TextButton(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(const Color.fromARGB(255, 123, 167, 150)),
+      ),
+      onPressed: () {
+        _pickImage();
+        _buildPreviewImagem();
+      },
+      child: const Text('Adicione uma foto da consulta', style: TextStyle(color: Colors.white)),
+    );
   }
 
   Widget _buildPreviewImagem() {
-  return _imagemEmBytes != null
-      ? Image.memory(_imagemEmBytes!, height: 150,)
+    return _imagemEmBytes != null
+      ? Column(
+        children: [
+          Image.memory(
+            _imagemEmBytes!,
+            height: 150,
+          ),
+          const SizedBox(height: 15),
+          ElevatedButton(
+            style: const ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 123, 167, 150)),
+
+            ),
+            onPressed: _removerImagem,
+            child: const Icon(Icons.delete, color: Colors.white,),
+          ),
+        ],
+      )
       : const SizedBox();
+  }
+
+  void _removerImagem() {
+    _imagemEmBytes = null;
+    setState(() {
+      _imagemEmBytes = null;
+    });
+  }
+
+  Future<void> _pickImage() async {
+    _imagemEmBytes = await pickImage();
+    setState(() {}); 
   }
 }

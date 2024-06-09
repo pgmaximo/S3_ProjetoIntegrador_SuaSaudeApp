@@ -20,16 +20,17 @@ class ConsultaHiveAdapter extends TypeAdapter<ConsultaHive> {
       especialista: fields[0] as String,
       data: fields[1] as DateTime,
       horario: fields[2] as String,
-      descricao: fields[3] as String,
+      descricao: fields[3] as String?,
       retorno: fields[4] as DateTime?,
       lembrete: fields[5] as String?,
+      imagem: fields[6] as Uint8List?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ConsultaHive obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.especialista)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class ConsultaHiveAdapter extends TypeAdapter<ConsultaHive> {
       ..writeByte(4)
       ..write(obj.retorno)
       ..writeByte(5)
-      ..write(obj.lembrete);
+      ..write(obj.lembrete)
+      ..writeByte(6)
+      ..write(obj.imagem);
   }
 
   @override

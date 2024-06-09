@@ -14,7 +14,6 @@ class RemediosPage extends StatelessWidget {
     return Scaffold(
       appBar: const AppBarWidget(
         titulo: 'Medicamentos',
-        logout: false,
         rota: '/home',
       ),
       body: Column(
@@ -52,7 +51,7 @@ class RemediosPage extends StatelessWidget {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text("Confirmar Exclusão"),
+                              title: const Text("Confirmar Exclusão", style: TextStyle(color: Colors.black)),
                               content: const Text(
                                   "Tem certeza que deseja excluir este medicamento?"),
                               actions: [
@@ -60,14 +59,14 @@ class RemediosPage extends StatelessWidget {
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: const Text("Cancelar"),
+                                  child: const Text("Cancelar", style: TextStyle(color: Colors.black)),
                                 ),
                                 TextButton(
                                   onPressed: () {
                                     removeMedicamento(index);
                                     Navigator.of(context).pop();
                                   },
-                                  child: const Text("Excluir"),
+                                  child: const Text("Excluir", style: TextStyle(color: Colors.black)),
                                 ),
                               ],
                             );
@@ -79,16 +78,16 @@ class RemediosPage extends StatelessWidget {
                         child: ListTile(
                           title: Text(med.nome),
                           subtitle: Text(
-                              'Horário: ${med.horario}, Período: ${med.periodo}, Intervalo: ${med.intervalo}'),
+                              'Horário: ${med.horario}\nPeríodo: ${med.periodo}\nIntervalo: ${med.intervalo}'),
                           trailing: IconButton(
-                            icon: const Icon(Icons.delete),
+                            icon: const Icon(Icons.delete, color: Colors.black),
                             onPressed: () {
                               // Confirmação de exclusão
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: const Text("Confirmar Exclusão"),
+                                    title: const Text("Confirmar Exclusão", style: TextStyle(color: Colors.black)),
                                     content: const Text(
                                         "Tem certeza que deseja excluir este medicamento?"),
                                     actions: [
@@ -96,14 +95,14 @@ class RemediosPage extends StatelessWidget {
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
-                                        child: const Text("Cancelar"),
+                                        child: const Text("Cancelar", style: TextStyle(color: Colors.black)),
                                       ),
                                       TextButton(
                                         onPressed: () {
                                           removeMedicamento(index);
                                           Navigator.of(context).pop();
                                         },
-                                        child: const Text("Excluir"),
+                                        child: const Text("Excluir", style: TextStyle(color: Colors.black)),
                                       ),
                                     ],
                                   );
@@ -126,12 +125,11 @@ class RemediosPage extends StatelessWidget {
             ),
           ),
           const Padding(
-            padding: EdgeInsets.only(bottom: 7),
+            padding: EdgeInsets.only(bottom: 15),
             child: Center(
               child: ButtonPage(
                 icone: Icon(Icons.add),
                 pagina: AddRemedioPage(),
-                corFundo: Colors.grey,
                 cor: Colors.white,
               ),
             ),

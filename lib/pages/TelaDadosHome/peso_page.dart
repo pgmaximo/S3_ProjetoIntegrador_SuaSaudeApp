@@ -56,13 +56,13 @@ class _PesoPageState extends State<PesoPage> {
                   }
                   Navigator.of(context).pop();
                 },
-                child: const Text('Salvar'),
+                child: const Text('Salvar', style: TextStyle(color: Colors.black)),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text('Cancelar'),
+                child: const Text('Cancelar', style: TextStyle(color: Colors.black)),
               ),
             ],
           );
@@ -94,12 +94,12 @@ class _PesoPageState extends State<PesoPage> {
                         );
                       }
                     },
-                    child: const Text('Remover')),
+                    child: const Text('Remover', style: TextStyle(color: Colors.black))),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Cancelar'),
+                  child: const Text('Cancelar', style: TextStyle(color: Colors.black)),
                 ),
               ]);
         });
@@ -113,7 +113,7 @@ class _PesoPageState extends State<PesoPage> {
         stream: usuarioService.getListaPeso(user.email!),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: Color.fromARGB(255, 123, 167, 150)));
           }
           if (snapshot.hasError) {
             return const Center(child: Text('Erro ao carregar dados'));
@@ -130,6 +130,7 @@ class _PesoPageState extends State<PesoPage> {
             itemBuilder: (context, index) {
               var pesoData = pesoList[index];
               return Card(
+                color: Colors.grey[200],
                 margin: const EdgeInsets.all(8.0),
                 child: ListTile(
                   title: Text(
@@ -155,17 +156,23 @@ class _PesoPageState extends State<PesoPage> {
           );
         },
       ),
+
+      // Botão para criar nova info de Peso
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.all(24),
-        child: FloatingActionButton(
-          key: const Key("botaoAddPeso"),
-          onPressed: () {
-            _addPeso();
-          },
-          elevation: 0,
-          shape: const CircleBorder(),
-          child: const Icon(Icons.add, color: Colors.black),
+        padding: const EdgeInsets.only(bottom: 15),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Color.fromARGB(255, 123, 167, 150),
+            shape: BoxShape.circle, // Mantém o formato circular
+          ),
+          child: IconButton(
+            key: const Key("botaoAddPeso"),
+            onPressed: () {
+              _addPeso();
+            },
+            icon: const Icon(Icons.add, color: Colors.white),
+          ),
         ),
       ),
     );

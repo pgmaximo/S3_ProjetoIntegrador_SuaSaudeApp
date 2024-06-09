@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:hive/hive.dart';
 part 'consulta_hive.g.dart';
 
@@ -13,7 +15,7 @@ class ConsultaHive extends HiveObject {
   String horario;
 
   @HiveField(3)
-  String descricao;
+  String? descricao;
 
   @HiveField(4)
   DateTime? retorno;
@@ -21,14 +23,16 @@ class ConsultaHive extends HiveObject {
   @HiveField(5)
   String? lembrete;
 
+  @HiveField(6)
+  Uint8List? imagem;
+
   ConsultaHive({
     required this.especialista,
     required this.data,
     required this.horario,
-    required this.descricao,
+    this.descricao,
     this.retorno,
     this.lembrete,
+    this.imagem,
   });
-
-  get especialidade => null;
 }

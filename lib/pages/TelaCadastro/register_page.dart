@@ -31,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
         context: context,
         builder: (context) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(color: Color.fromARGB(255, 123, 167, 150)),
           );
         });
 
@@ -196,13 +196,15 @@ class _RegisterPageState extends State<RegisterPage> {
                     GestureDetector(
                       onTap: widget.onTap,
                       child: const Text("Faça login",
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                          )),
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        )
+                      ),
                     ),
                   ],
-                )
+                ),
+                const SizedBox(height: 50),
               ],
             ),
           ),

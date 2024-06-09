@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// Usado no login principal
+
 class MyButton extends StatelessWidget {
   final Function()? onTap;
   final String text;
@@ -18,7 +20,7 @@ class MyButton extends StatelessWidget {
           padding: const EdgeInsets.all(25),
           margin: const EdgeInsets.symmetric(horizontal: 25),
           decoration: BoxDecoration(
-              color: Colors.black, borderRadius: BorderRadius.circular(8)),
+              color: Colors.black, borderRadius: BorderRadius.circular(16)),
           child: Center(
             child: Text(text,
                 style: const TextStyle(

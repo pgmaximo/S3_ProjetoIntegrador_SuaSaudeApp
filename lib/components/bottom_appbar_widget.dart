@@ -11,13 +11,13 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      height: 75,
-      color: Colors.blueGrey[400],
+      height: 60,
+      color: const Color.fromARGB(255, 123, 167, 150),
       elevation: 0,
       child: SizedBox(
-        height: 40,
+        height: 30,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8),
           child: GestureDetector(
             onTap: () {
               showDialog(
@@ -36,7 +36,7 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: const Text("Fechar"),
+                        child: const Text("Fechar", style: TextStyle(color: Colors.black),),
                       ),
                     ],
                   );
@@ -50,7 +50,7 @@ class _BottomAppBarWidgetState extends State<BottomAppBarWidget> {
                   "Sobre nós",
                   style: TextStyle(
                     color: Colors.white,
-                    decoration: TextDecoration.underline,
+                    fontSize: 14,
                   ),
                 ),
               ],

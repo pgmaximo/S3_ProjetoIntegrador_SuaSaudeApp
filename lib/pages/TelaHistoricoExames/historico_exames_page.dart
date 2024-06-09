@@ -64,21 +64,21 @@ class HistoricoExamesPage extends StatelessWidget {
                           context: context,
                           builder: (BuildContext context) {
                             return AlertDialog(
-                              title: const Text("Confirmar Exclusão"),
+                              title: const Text("Confirmar Exclusão", style: TextStyle(color: Colors.black)),
                               content: const Text("Tem certeza que deseja excluir todos os exames deste tipo?"),
                               actions: [
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
-                                  child: const Text("Cancelar"),
+                                  child: const Text("Cancelar", style: TextStyle(color: Colors.black)),
                                 ),
                                 TextButton(
                                   onPressed: () {
                                     removeExamesPorTipo(tipoExame);
                                     Navigator.of(context).pop();
                                   },
-                                  child: const Text("Excluir"),
+                                  child: const Text("Excluir", style: TextStyle(color: Colors.black)),
                                 ),
                               ],
                             );
@@ -89,27 +89,27 @@ class HistoricoExamesPage extends StatelessWidget {
                         title: Text(tipoExame),
                         subtitle: Text('Exames Realizados: ${examesPorTipo[tipoExame]!.length}'),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete),
+                          icon: const Icon(Icons.delete, color: Colors.black),
                           onPressed: () {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: const Text("Confirmar Exclusão"),
+                                  title: const Text("Confirmar Exclusão", style: TextStyle(color: Colors.black)),
                                   content: const Text("Tem certeza que deseja excluir todos os exames deste tipo?"),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
-                                      child: const Text("Cancelar"),
+                                      child: const Text("Cancelar", style: TextStyle(color: Colors.black)),
                                     ),
                                     TextButton(
                                       onPressed: () {
                                         removeExamesPorTipo(tipoExame);
                                         Navigator.of(context).pop();
                                       },
-                                      child: const Text("Excluir"),
+                                      child: const Text("Excluir", style: TextStyle(color: Colors.black)),
                                     ),
                                   ],
                                 );
@@ -131,12 +131,11 @@ class HistoricoExamesPage extends StatelessWidget {
             ),
           ),
           const Padding(
-            padding: EdgeInsets.only(bottom: 7),
+            padding: EdgeInsets.only(bottom: 15),
             child: Center(
               child: ButtonPage(
                 icone: Icon(Icons.add),
                 pagina: AddExamesPage(),
-                corFundo: Colors.grey,
                 cor: Colors.white,
               ),
             ),

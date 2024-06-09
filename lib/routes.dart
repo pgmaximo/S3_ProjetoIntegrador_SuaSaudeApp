@@ -30,9 +30,11 @@ Map<String, Widget Function(BuildContext context)> rotas = {
 
   // Rotas para paginas de consultas
   '/specialty_consulta' : (context) => const SpecialtyConsulta(),
-  '/list_consulta' : (context) => const ConsultaMarcadas(especialista: '',),
+  '/list_consulta': (context) => ConsultaMarcadas(
+    especialista: ModalRoute.of(context)!.settings.arguments as String,
+  ),
   '/add_consulta' : (context) => const NovaConsulta(),
-    '/detail_consulta': (context) => TelaConsulta(
+  '/detail_consulta': (context) => TelaConsulta(
     consulta: ModalRoute.of(context)!.settings.arguments as ConsultaHive, 
   ),
 

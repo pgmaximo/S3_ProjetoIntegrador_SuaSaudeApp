@@ -39,12 +39,27 @@ class ExamesRealizadosPage extends StatelessWidget {
               const SizedBox(height: 20),
               ...exames.map((exame) {
                 return ListTile(
-                  title: Text('Data: ${exame.data}'),
+                  title: Row(
+                    children: [
+                      const Text('Data: ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text(exame.data, style: const TextStyle(fontSize: 16),)
+                    ],
+                  ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Referência: ${exame.valorRef}'),
-                      Text('Resultado: ${exame.resultado}'),
+                      Row(
+                        children: [
+                          const Text('Referência: ', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black)),
+                          Text(exame.valorRef, style: const TextStyle(fontSize: 12, color: Colors.black))
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text('Resultado: ', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black)),
+                          Text(exame.resultado, style: const TextStyle(fontSize: 12, color: Colors.black)),
+                        ],
+                      ),
                     ],
                   ),
                 );

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/consulta_hive.dart';
+import 'package:teste_firebase/pages/TelaConsulta/add_consulta.dart';
 import 'package:teste_firebase/pages/TelaConsulta/detail_consulta.dart';
 
 class ConsultaMarcadas extends StatelessWidget {
@@ -25,57 +25,95 @@ class ConsultaMarcadas extends StatelessWidget {
               .where((consulta) => consulta.especialista == especialista)
               .toList();
 
+          // Ordena a lista de consultas pela data em ordem decrescente
+          consultasDoEspecialista.sort((a, b) => b.data.compareTo(a.data));
+
           if (consultasDoEspecialista.isEmpty) {
             return const Center(
-                child: Text(
-                    "Nenhuma consulta encontrada para este especialista."));
+              child: Text(
+                "Nenhuma consulta encontrada para esta especialidade."
+              )
+            );
           }
           return ListView.builder(
             itemCount: consultasDoEspecialista.length,
             itemBuilder: (context, index) {
               ConsultaHive consulta = consultasDoEspecialista[index];
-              return BotaoListConsulta(consulta: consulta);
+              bool isFutureConsulta = consulta.data.isAfter(DateTime.now());
+
+              return InkWell(
+                key: Key(consulta.key.toString()),
+                onLongPress: () => _confirmDeleteDialog(context, consulta),
+                child: Container(
+                  child: ListTile(
+                    title: Text(
+                      '${isFutureConsulta ? 'Próxima consulta - ' : ''}${DateFormat('dd/MM/yyyy').format(consulta.data)}',
+                      style: const TextStyle(color: Colors.black, fontSize: 20),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.black),
+                      onPressed: () => _confirmDeleteDialog(context, consulta),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TelaConsulta(consulta: consulta),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
             },
           );
         },
       ),
-    );
-  }
-}
-
-class BotaoListConsulta extends StatelessWidget {
-  final ConsultaHive consulta;
-  const BotaoListConsulta({super.key, required this.consulta});
-
-  @override
-  Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => TelaConsulta(consulta: consulta)));
-      },
-      child: Container(
-        width: size.width,
-        height: 75,
+      floatingActionButton: Container(
         decoration: const BoxDecoration(
-          border: Border.symmetric(
-              horizontal: BorderSide(color: Colors.grey, width: 3.0)),
+          shape: BoxShape.circle,
+          color: Color.fromARGB(255, 123, 167, 150),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(DateFormat('dd/MM/yyyy').format(consulta.data),
-                  style: const TextStyle(color: Colors.black, fontSize: 20)),
-              const Icon(Icons.arrow_forward_ios, size: 20),
-            ],
-          ),
+        child: IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NovaConsulta(especialidade: especialista),
+              ),
+            );
+          },
+          icon: const Icon(Icons.add, color: Colors.white),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  void _confirmDeleteDialog(BuildContext context, ConsultaHive consulta) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirmar Exclusão", style: TextStyle(color: Colors.black)),
+          content: const Text("Tem certeza que deseja excluir esta consulta?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancelar", style: TextStyle(color: Colors.black)),
+            ),
+            TextButton(
+              onPressed: () {
+                consulta.delete();
+                Navigator.of(context).pop();
+              },
+              child: const Text("Excluir", style: TextStyle(color: Colors.black)),
+            ),
+          ],
+        );
+      },
     );
   }
 }

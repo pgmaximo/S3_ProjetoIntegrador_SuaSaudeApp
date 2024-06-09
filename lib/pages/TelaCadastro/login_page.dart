@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         builder: (context) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(color: Color.fromARGB(255, 123, 167, 150)),
           );
         });
 
@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Text("Esqueceu a senha?",
                           style: TextStyle(
-                            color: Colors.grey[600],
+                            color: Colors.grey[700],
                           )),
                     ],
                   ),
@@ -133,7 +133,8 @@ class _LoginPageState extends State<LoginPage> {
                 MyButton(
                     key: const Key("botaologin"),
                     onTap: signUserIn,
-                    text: "Login"),
+                    text: "Login"
+                  ),
 
                 const SizedBox(height: 25),
 
@@ -170,31 +171,36 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 50),
 
                 //login google
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center, 
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
                   //google
                   SquareTile(
-                      key: const Key("logingoogle"),
-                      onTap: () => AuthService().signInWithGoogle(),
-                      imgPath: "lib/images/google_logo.png"),
+                    key: const Key("logingoogle"),
+                    onTap: () => AuthService().signInWithGoogle(),
+                    imgPath: "lib/images/google_logo.png"
+                  ),
 
-                  const SizedBox(width: 25),
-                  
+                  // const SizedBox(width: 25),
+
                   //facebook
                   // SquareTile(
                   //   key: const Key("loginfacebook"),
                   //   onTap: () => {},
                   //   imgPath: "lib/images/facebook_logo.png",
                   // )
-                ]),
+                  ]
+                ),
 
                 const SizedBox(height: 50),
 
-                //ainda nao cadastrado
+                //Ainda nao cadastrado
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Ainda nao cadastrado?',
+                      'Ainda não cadastrado?',
                       style: TextStyle(color: Colors.grey[700]),
                     ),
                     const SizedBox(width: 4),
@@ -208,7 +214,8 @@ class _LoginPageState extends State<LoginPage> {
                           )),
                     ),
                   ],
-                )
+                ),
+                const SizedBox(height: 50),
               ],
             ),
           ),
