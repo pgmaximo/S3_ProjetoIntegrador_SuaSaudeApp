@@ -42,28 +42,33 @@ class _HomePageState extends State<HomePage> {
                     return Text('Error: ${snapshot.error}');
                   } else {
                     String displayName = snapshot.data ?? user.email!;
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          key: Key("boasvindas"),
-                          "Bem vindo ",
-                          style: TextStyle(fontSize: 24),
-                        ),
-                        Text(
-                          displayName,
-                          key: const Key("boasvindasNome"),
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(width: 2),
-                        const Text(
-                          key: Key("boasvindasExclamacao"),
-                          "!",
-                          style: TextStyle(fontSize: 24),
-                        ),
-
-                      ],
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        children: [
+                          const Text(
+                            key: Key("boasvindas"),
+                            "Bem vindo ",
+                            style: TextStyle(fontSize: 24),
+                          ),
+                          Flexible(
+                            child: Text(
+                              displayName,
+                              key: const Key("boasvindasNome"),
+                              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ),
+                          const SizedBox(width: 2),
+                          // const Text(
+                          //   key: Key("boasvindasExclamacao"),
+                          //   "!",
+                          //   style: TextStyle(fontSize: 24),
+                          // ),
+                        ],
+                      ),
                     );
                   }
                 },

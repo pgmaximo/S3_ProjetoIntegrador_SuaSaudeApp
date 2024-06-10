@@ -40,8 +40,8 @@ class RemediosPage extends StatelessWidget {
                       if (DateTime.now().isAfter(periodo)) {
                         isExpired = true;
                       }
-                    } catch (e) {
-                      print("erro comparando tempo");
+                    } catch (e){
+                      //
                     }
 
                     return InkWell(
