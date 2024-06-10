@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/page_button.dart';
 import 'package:teste_firebase/components/exames_hive.dart';
+import 'package:teste_firebase/components/snackbar_widget.dart';
 import 'package:teste_firebase/pages/TelaHistoricoExames/add_exames_page.dart';
 import 'package:teste_firebase/pages/TelaHistoricoExames/exames_realizados_page.dart';
 
@@ -76,6 +77,7 @@ class HistoricoExamesPage extends StatelessWidget {
                                 TextButton(
                                   onPressed: () {
                                     removeExamesPorTipo(tipoExame);
+                                    SnackbarUtil.showSnackbar(context, 'Exame removido com sucesso');
                                     Navigator.of(context).pop();
                                   },
                                   child: const Text("Excluir", style: TextStyle(color: Colors.black)),
@@ -107,6 +109,7 @@ class HistoricoExamesPage extends StatelessWidget {
                                     TextButton(
                                       onPressed: () {
                                         removeExamesPorTipo(tipoExame);
+                                        SnackbarUtil.showSnackbar(context, 'Exame removido com sucesso');
                                         Navigator.of(context).pop();
                                       },
                                       child: const Text("Excluir", style: TextStyle(color: Colors.black)),

@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/exames_hive.dart';
+import 'package:teste_firebase/components/snackbar_widget.dart';
 import 'package:teste_firebase/services/exames_service.dart';
 
 class AddExamesPage extends StatefulWidget {
@@ -67,10 +68,7 @@ class _AddExamesPageState extends State<AddExamesPage> {
     );
     await box.add(novoExame);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Exame salvo com sucesso!"))
-    );
-
+    SnackbarUtil.showSnackbar(context, "Exame salvo com sucesso!");
     Navigator.pushReplacementNamed(context, '/historico_exames_page');
   }
 
@@ -157,7 +155,7 @@ class _AddExamesPageState extends State<AddExamesPage> {
           ),
           Container(
             height: 50,
-            color: Colors.grey,
+            color: const Color.fromARGB(255, 123, 167, 150),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

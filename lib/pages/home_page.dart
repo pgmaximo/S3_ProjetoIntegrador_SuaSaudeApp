@@ -61,12 +61,6 @@ class _HomePageState extends State<HomePage> {
                               maxLines: 1,
                             ),
                           ),
-                          const SizedBox(width: 2),
-                          // const Text(
-                          //   key: Key("boasvindasExclamacao"),
-                          //   "!",
-                          //   style: TextStyle(fontSize: 24),
-                          // ),
                         ],
                       ),
                     );

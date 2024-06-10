@@ -1,17 +1,18 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker_web/image_picker_web.dart';
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/consulta_hive.dart';
+import 'package:teste_firebase/components/snackbar_widget.dart';
 
 class EditarConsulta extends StatefulWidget {
   final ConsultaHive consulta;
-  final VoidCallback aoSalvar; 
+  final VoidCallback aoSalvar;
 
-  const EditarConsulta({super.key, required this.consulta, required this.aoSalvar,});
+  const EditarConsulta({super.key, required this.consulta, required this.aoSalvar});
 
   @override
   State<EditarConsulta> createState() => _EditarConsultaState();
@@ -41,9 +42,9 @@ class _EditarConsultaState extends State<EditarConsulta> {
     );
     retornoSelecionado = widget.consulta.retorno;
     _especialistaController.text = widget.consulta.especialista;
-    _descricaoController.text = widget.consulta.descricao ?? '';
+    _descricaoController.text = widget.consulta.descricao!;
     _retornoController.text = retornoSelecionado != null ? DateFormat('dd/MM/yyyy').format(retornoSelecionado!) : '';
-    _lembreteController.text = widget.consulta.lembrete ?? '';
+    _lembreteController.text = widget.consulta.lembrete!;
     _imagemEmBytes = widget.consulta.imagem;
     _updateDateTimeController();
   }
@@ -52,9 +53,9 @@ class _EditarConsultaState extends State<EditarConsulta> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWidget(
-        titulo: "Editar Consulta", 
-        rota: '/detail_consulta',
-        arguments: widget.consulta,
+        titulo: "Edição da consulta",
+        rota: '/list_consulta',
+        arguments: widget.consulta.especialista,
       ),
       body: Form(
         key: _formKey,
@@ -68,9 +69,7 @@ class _EditarConsultaState extends State<EditarConsulta> {
                 decoration: const InputDecoration(labelText: 'Especialidade'),
                 validator: (value) => value!.isEmpty ? 'Por favor, insira a especialidade' : null,
               ),
-
               const SizedBox(height: 15),
-
               TextFormField(
                 controller: _dateTimeController,
                 decoration: const InputDecoration(labelText: 'Data e Horário'),
@@ -78,62 +77,66 @@ class _EditarConsultaState extends State<EditarConsulta> {
                 readOnly: true,
                 validator: (value) => value!.isEmpty ? 'Por favor, insira a data e o horário' : null,
               ),
-
               const SizedBox(height: 15),
-
               TextFormField(
                 controller: _descricaoController,
                 decoration: const InputDecoration(labelText: 'Resumo da Consulta'),
                 maxLines: 3,
               ),
-
               const SizedBox(height: 15),
-
               TextFormField(
                 controller: _retornoController,
                 decoration: const InputDecoration(labelText: 'Retorno em'),
                 onTap: _selectReturnDate,
-                readOnly: true,
               ),
-
               const SizedBox(height: 15),
-
               TextFormField(
                 controller: _lembreteController,
                 decoration: const InputDecoration(labelText: 'Lembrete para agendamento'),
               ),
-
-              const SizedBox(height: 50),
-              _buildSelectImageButton(),
-              const SizedBox(height: 25),
+              const SizedBox(height: 40),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all(const Color.fromARGB(255, 123, 167, 150)),
+                  fixedSize: WidgetStateProperty.all(const Size.fromWidth(100)),
+                ),
+                onPressed: _pickImage,
+                child: const Text('Adicionar Foto da consulta', style: TextStyle(color: Colors.white)),
+              ),
               _buildPreviewImagem(),
-            ]
+            ],
           ),
         ),
       ),
-
-      // Botão de salvar a consulta
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 15),
-        child: Container(
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Color.fromARGB(255, 123, 167, 150),
-          ),
-          child: IconButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                _saveConsulta();
-              }
-            },
-            icon: const Icon(Icons.save, color: Colors.white, size: 22),
-          ),
+      bottomNavigationBar: Container(
+        height: 50,
+        color: const Color.fromARGB(255, 123, 167, 150),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Cancelar",
+                style: TextStyle(color: Colors.white, fontSize: 25),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  _saveConsulta();
+                }
+              },
+              child: const Text("Salvar",
+                  style: TextStyle(color: Colors.white, fontSize: 25)),
+            ),
+          ],
         ),
       ),
     );
   }
-
 
   void _selectReturnDate() async {
     final DateTime? picked = await showDatePicker(
@@ -177,66 +180,45 @@ class _EditarConsultaState extends State<EditarConsulta> {
   }
 
   void _saveConsulta() async {
+    try {
+      widget.consulta.especialista = _especialistaController.text;
+      widget.consulta.data = dataSelecionada;
+      widget.consulta.horario = '${horarioSelecionado.hour}:${horarioSelecionado.minute}';
+      widget.consulta.descricao = _descricaoController.text;
+      widget.consulta.retorno = retornoSelecionado;
+      widget.consulta.lembrete = _lembreteController.text;
+      widget.consulta.imagem = _imagemEmBytes;
 
-    widget.consulta.especialista = _especialistaController.text;
-    widget.consulta.data = dataSelecionada;
-    widget.consulta.horario = '${horarioSelecionado.hour}:${horarioSelecionado.minute}';
-    widget.consulta.descricao = _descricaoController.text;
-    widget.consulta.retorno = retornoSelecionado;
-    widget.consulta.lembrete = _lembreteController.text;
-    widget.consulta.imagem = _imagemEmBytes;
+      final box = await Hive.openBox<ConsultaHive>('consultasBox');
+      await box.put(widget.consulta.key, widget.consulta);
+      widget.aoSalvar();
 
-    widget.aoSalvar(); 
+      SnackbarUtil.showSnackbar(context, 'Consulta editada com sucesso!'); // Usando o SnackbarUtil para sucesso
+    } catch (e) {
+      SnackbarUtil.showSnackbar(context, 'Erro ao editar a consulta!', isError: true); // Usando o SnackbarUtil para erro
+    }
+
     Navigator.of(context).pop();
   }
 
-  Future<Uint8List?> pickImage() async {
+  Future<void> _pickImage() async {
     if (kIsWeb) {
       final image = await ImagePickerWeb.getImageAsBytes();
-      return image;
+      if (image != null) {
+        setState(() {
+          _imagemEmBytes = image;
+        });
+      }
     } else {
       final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: ImageSource.camera);
-      if (pickedFile != null) {
-        return await File(pickedFile.path).readAsBytes();
+      final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedImage != null) {
+        final imageBytes = await pickedImage.readAsBytes();
+        setState(() {
+          _imagemEmBytes = imageBytes;
+        });
       }
     }
-    return null;
-  }
-
-  Widget _buildSelectImageButton() {
-    return TextButton(
-      style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all(const Color.fromARGB(255, 123, 167, 150)),
-      ),
-      onPressed: () {
-        _pickImage();
-        _buildPreviewImagem();
-      },
-      child: const Text('Adicione uma foto da consulta', style: TextStyle(color: Colors.white)),
-    );
-  }
-
-  Widget _buildPreviewImagem() {
-    return _imagemEmBytes != null
-      ? Column(
-        children: [
-          Image.memory(
-            _imagemEmBytes!,
-            height: 150,
-          ),
-          const SizedBox(height: 15),
-          ElevatedButton(
-            style: const ButtonStyle(
-              backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 123, 167, 150)),
-
-            ),
-            onPressed: _removerImagem,
-            child: const Icon(Icons.delete, color: Colors.white,),
-          ),
-        ],
-      )
-      : const SizedBox();
   }
 
   void _removerImagem() {
@@ -246,8 +228,26 @@ class _EditarConsultaState extends State<EditarConsulta> {
     });
   }
 
-  Future<void> _pickImage() async {
-    _imagemEmBytes = await pickImage();
-    setState(() {}); 
+  Widget _buildPreviewImagem() {
+    return _imagemEmBytes != null
+      ? Column(
+        children: [
+          Image.memory(
+            _imagemEmBytes!,
+            height: 300,
+            fit: BoxFit.fitHeight,
+          ),
+          const SizedBox(height: 15),
+          ElevatedButton(
+            style: const ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(Color.fromARGB(255, 123, 167, 150)),
+              shape: WidgetStatePropertyAll(CircleBorder()),
+            ),
+            onPressed: _removerImagem,
+            child: const Icon(Icons.delete, color: Colors.white, size: 24),
+          ),
+        ],
+      )
+      : const SizedBox();
   }
 }

@@ -3,6 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/medicamento_hive.dart';
+import 'package:teste_firebase/components/snackbar_widget.dart';
 import 'package:teste_firebase/pages/TelaMedicamento/remedios_page.dart';
 import 'package:teste_firebase/services/medicamento_service.dart';
 
@@ -183,7 +184,7 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
           ),
           Container(
             height: 50,
-            color: Colors.grey,
+            color: const Color.fromARGB(255, 123, 167, 150),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -236,7 +237,6 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
     await box.add(novoMedicamento);
 
     // Opcional: Mostra um snackbar ou outro feedback
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Medicamento salvo com sucesso!")));
+    SnackbarUtil.showSnackbar(context, "Medicamento salvo com sucesso!");
   }
 }

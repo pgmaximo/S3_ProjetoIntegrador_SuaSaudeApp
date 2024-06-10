@@ -4,6 +4,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
+import 'package:teste_firebase/components/snackbar_widget.dart';
 import 'package:teste_firebase/services/usuario_service.dart';
 
 class PressaoPage extends StatefulWidget {
@@ -56,9 +57,11 @@ class _PressaoPageState extends State<PressaoPage> {
                 String pressao = controller.text;
                 try {
                   await usuarioService.setListaPressao(user.email!, pressao);
+                  SnackbarUtil.showSnackbar(context, 'Pressão salva com sucesso!');
                   Navigator.of(context).pop();
                 } catch (e) {
                   // debugPrint('Erro ao adicionar pressão: $e');
+                  SnackbarUtil.showSnackbar(context, 'Erro ao salvar a pressão', isError: true);
                 }
               },
               child: const Text('Salvar', style: TextStyle(color: Colors.black)),
@@ -90,16 +93,10 @@ class _PressaoPageState extends State<PressaoPage> {
                         await usuarioService.removePressao(
                             user.email!, pressaoData);
                         Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Pressão removida com sucesso')),
-                        );
+                        SnackbarUtil.showSnackbar(context, 'Pressão removida com sucesso');
                       } catch (e) {
                         debugPrint('Erro ao remover pressão: $e');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Erro ao remover pressão')),
-                        );
+                        SnackbarUtil.showSnackbar(context, 'Erro ao remover pressão', isError: true);
                       }
                     },
                     child: const Text('Remover', key: Key("removerPopup"), style: TextStyle(color: Colors.black))),

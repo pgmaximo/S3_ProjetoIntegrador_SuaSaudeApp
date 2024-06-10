@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
+import 'package:teste_firebase/components/snackbar_widget.dart';
 import 'package:teste_firebase/services/usuario_service.dart';
 
 class GlicemiaPage extends StatefulWidget {
@@ -52,6 +53,7 @@ class _GlicemiaPageState extends State<GlicemiaPage> {
                 onPressed: () async {
                   String glicemia = controller.text;
                   await usuarioService.setGlicemia(user.email!, glicemia);
+                  SnackbarUtil.showSnackbar(context, 'Glicemia salva com sucesso!');
                   Navigator.of(context).pop();
                 },
                 child: const Text('Salvar', style: TextStyle(color: Colors.black)),
@@ -81,15 +83,10 @@ class _GlicemiaPageState extends State<GlicemiaPage> {
                         // debugPrint('Glicemia data: $glicemiaData');
                         await usuarioService.removeGlicemia(user.email!, glicemiaData);
                         Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Glicemia removido com sucesso')),
-                        );
+                        SnackbarUtil.showSnackbar(context, 'Glicemia removida com sucesso');
                       } catch (e) {
                         // debugPrint('Erro ao remover glicemia: $e');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Erro ao remover glicemia')),
-                        );
+                        SnackbarUtil.showSnackbar(context, 'Erro ao remover glicemia', isError: true);
                       }
                     },
                     child: const Text('Remover', style: TextStyle(color: Colors.black))),

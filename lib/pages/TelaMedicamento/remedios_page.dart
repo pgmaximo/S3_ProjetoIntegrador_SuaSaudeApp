@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/page_button.dart';
+import 'package:teste_firebase/components/snackbar_widget.dart';
 import 'package:teste_firebase/pages/TelaMedicamento/add_remedio_page.dart';
 import 'package:teste_firebase/components/medicamento_hive.dart';
 import 'package:intl/intl.dart'; // Adicione este pacote para formatação de data
@@ -64,6 +65,7 @@ class RemediosPage extends StatelessWidget {
                                 TextButton(
                                   onPressed: () {
                                     removeMedicamento(index);
+                                    SnackbarUtil.showSnackbar(context, 'Medicamento removido com sucesso');
                                     Navigator.of(context).pop();
                                   },
                                   child: const Text("Excluir", style: TextStyle(color: Colors.black)),
@@ -100,6 +102,7 @@ class RemediosPage extends StatelessWidget {
                                       TextButton(
                                         onPressed: () {
                                           removeMedicamento(index);
+                                          SnackbarUtil.showSnackbar(context, 'Medicamento removido com sucesso');
                                           Navigator.of(context).pop();
                                         },
                                         child: const Text("Excluir", style: TextStyle(color: Colors.black)),

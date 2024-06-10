@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/consulta_hive.dart';
+import 'package:teste_firebase/components/snackbar_widget.dart';
 import 'package:teste_firebase/pages/TelaConsulta/add_consulta.dart';
 import 'package:teste_firebase/pages/TelaConsulta/detail_consulta.dart';
 
@@ -107,6 +108,7 @@ class ConsultaMarcadas extends StatelessWidget {
             TextButton(
               onPressed: () {
                 consulta.delete();
+                SnackbarUtil.showSnackbar(context, 'Consulta removida com sucesso');
                 Navigator.of(context).pop();
               },
               child: const Text("Excluir", style: TextStyle(color: Colors.black)),

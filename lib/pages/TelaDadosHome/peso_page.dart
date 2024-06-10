@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
+import 'package:teste_firebase/components/snackbar_widget.dart';
 import 'package:teste_firebase/services/usuario_service.dart';
 
 class PesoPage extends StatefulWidget {
@@ -54,6 +55,7 @@ class _PesoPageState extends State<PesoPage> {
                   if (!(altura == "")) {
                     await usuarioService.setAltura(altura);
                   }
+                  SnackbarUtil.showSnackbar(context, 'Peso salvo com sucesso!');
                   Navigator.of(context).pop();
                 },
                 child: const Text('Salvar', style: TextStyle(color: Colors.black)),
@@ -83,15 +85,10 @@ class _PesoPageState extends State<PesoPage> {
                         // debugPrint('Peso data: $pesoData');
                         await usuarioService.removePeso(user.email!, pesoData);
                         Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Peso removido com sucesso')),
-                        );
+                        SnackbarUtil.showSnackbar(context, 'Peso removido com sucesso');
                       } catch (e) {
                         // debugPrint('Erro ao remover peso: $e');
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Erro ao remover peso')),
-                        );
+                        SnackbarUtil.showSnackbar(context, 'Erro ao remover peso', isError: true);
                       }
                     },
                     child: const Text('Remover', style: TextStyle(color: Colors.black))),

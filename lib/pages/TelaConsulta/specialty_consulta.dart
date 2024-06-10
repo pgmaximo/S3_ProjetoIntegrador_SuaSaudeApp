@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:teste_firebase/components/appbar_widget.dart';
 import 'package:teste_firebase/components/consulta_hive.dart';
+import 'package:teste_firebase/components/snackbar_widget.dart';
 import 'package:teste_firebase/pages/TelaConsulta/add_consulta.dart';
 import 'package:teste_firebase/pages/TelaConsulta/list_consulta.dart';
 import 'package:teste_firebase/components/page_button.dart';  // Certifique-se de importar a classe ButtonPage
@@ -17,7 +18,7 @@ class _SpecialtyConsulta extends State<SpecialtyConsulta> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppBarWidget(titulo: 'Consultas Realizadas', rota: '/home'),
+      appBar: const AppBarWidget(titulo: 'Especialidade das consultas', rota: '/home'),
       body: Column(
         children: [
           Expanded(
@@ -53,6 +54,7 @@ class _SpecialtyConsulta extends State<SpecialtyConsulta> {
                                 TextButton(
                                   onPressed: () {
                                     removeEspecialista(especialista);
+                                    SnackbarUtil.showSnackbar(context, 'Especilidade de consulta removida com sucesso');
                                     Navigator.of(context).pop();
                                   },
                                   child: const Text("Excluir", style: TextStyle(color: Colors.black)),
@@ -86,6 +88,7 @@ class _SpecialtyConsulta extends State<SpecialtyConsulta> {
                                       TextButton(
                                         onPressed: () {
                                           removeEspecialista(especialista);
+                                          SnackbarUtil.showSnackbar(context, 'Especilidade de consulta removida com sucesso');
                                           Navigator.of(context).pop();
                                         },
                                         child: const Text("Excluir", style: TextStyle(color: Colors.black)),
