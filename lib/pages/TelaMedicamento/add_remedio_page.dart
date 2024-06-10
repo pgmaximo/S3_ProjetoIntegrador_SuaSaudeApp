@@ -6,6 +6,8 @@ import 'package:teste_firebase/components/medicamento_hive.dart';
 import 'package:teste_firebase/components/snackbar_widget.dart';
 import 'package:teste_firebase/pages/TelaMedicamento/remedios_page.dart';
 import 'package:teste_firebase/services/medicamento_service.dart';
+import 'package:teste_firebase/services/notification_service.dart';
+
 
 class AddRemedioPage extends StatefulWidget {
   const AddRemedioPage({super.key});
@@ -20,6 +22,8 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
   List<String> nomeMedicamento = [];
   List<String> nomeMedicamentoFiltrado = [];
   TextEditingController controleBusca = TextEditingController();
+  final NotificationService _notificationService = NotificationService(); // Inicializa o serviço de notificação
+
 
   TimeOfDay? horaSelec;
   DateTime? periodoSelec;
@@ -235,6 +239,28 @@ class _AddRemedioPageState extends State<AddRemedioPage> {
             ? "${horasIntervalo!}h ${minutosIntervalo!}m"
             : "1h");
     await box.add(novoMedicamento);
+
+    // Agendar notificação recorrente
+    if (horaSelec != null && periodoSelec != null && horasIntervalo != null && minutosIntervalo != null) {
+      DateTime startTime = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+        horaSelec!.hour,
+        horaSelec!.minute,
+      );
+
+      Duration interval = Duration(hours: horasIntervalo!, minutes: minutosIntervalo!);
+
+      await _notificationService.showRepeatingNotification(
+        id: box.length, // Usar o comprimento da caixa como ID único
+        title: 'Hora de tomar o remédio',
+        body: 'É hora de tomar o ${novoMedicamento.nome}',
+        startTime: startTime,
+        interval: interval,
+        endTime: periodoSelec!,
+      );
+    }
 
     // Opcional: Mostra um snackbar ou outro feedback
     SnackbarUtil.showSnackbar(context, "Medicamento salvo com sucesso!");

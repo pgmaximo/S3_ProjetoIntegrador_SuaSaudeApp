@@ -1,4 +1,8 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.seu_pacote.aqui">
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
         android:label="teste_firebase"
         android:name="${applicationName}"
@@ -16,9 +20,8 @@
                  while the Flutter UI initializes. After that, this theme continues
                  to determine the Window background behind the Flutter UI. -->
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme"/>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -29,5 +32,40 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- Configuração para Notificações -->
+        <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="com.dexterous.flutterlocalnotifications.SCHEDULED_NOTIFICATION"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.dexterous.flutterlocalnotifications.ActionReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="com.dexterous.flutterlocalnotifications.ACTION_NOTIFICATION"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.dexterous.flutterlocalnotifications.DismissedReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="com.dexterous.flutterlocalnotifications.DISMISSED_NOTIFICATION"/>
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.dexterous.flutterlocalnotifications.ForegroundService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"/>
+
+        <!-- Permitir reinício das notificações após o reboot do dispositivo -->
+        <receiver
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
