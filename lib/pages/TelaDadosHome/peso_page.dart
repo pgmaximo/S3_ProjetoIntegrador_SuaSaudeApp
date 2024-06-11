@@ -113,7 +113,7 @@ class _PesoPageState extends State<PesoPage> {
             return const Center(child: CircularProgressIndicator(color: Color.fromARGB(255, 123, 167, 150)));
           }
           if (snapshot.hasError) {
-            return const Center(child: Text('Erro ao carregar dados'));
+            return const Center(child: Text('Sem dados'));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(

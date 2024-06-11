@@ -37,7 +37,8 @@ class _HomePageState extends State<HomePage> {
                 stream: usuarioService.getNome(user.email!),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator(color: Color.fromARGB(255, 123, 167, 150));
+                    return const CircularProgressIndicator(
+                        color: Color.fromARGB(255, 123, 167, 150));
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
@@ -52,14 +53,13 @@ class _HomePageState extends State<HomePage> {
                             "Bem vindo ",
                             style: TextStyle(fontSize: 24),
                           ),
-                          Flexible(
-                            child: Text(
-                              displayName,
-                              key: const Key("boasvindasNome"),
-                              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
+                          Text(
+                            displayName,
+                            key: const Key("boasvindasNome"),
+                            style: const TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                         ],
                       ),
@@ -74,45 +74,43 @@ class _HomePageState extends State<HomePage> {
               Wrap(
                 children: [
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // quadrado pressao
-                      BoxInfo(
-                        key: const Key("histPressaoButton"),
-                        textoTitulo: "Ultima aferição de pressão",
-                        documentId: user.email!,
-                        campo: 'pressao',
-                      ),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // quadrado pressao
+                        BoxInfo(
+                          key: const Key("histPressaoButton"),
+                          textoTitulo: "Ultima aferição de pressão",
+                          documentId: user.email!,
+                          campo: 'pressao',
+                        ),
 
-                      // quadrado Peso e altura
-                      BoxInfo(
-                        key: const Key("histPesoButton"),
-                        textoTitulo: "Peso e altura",
-                        documentId: user.email!,
-                        campo: "altura",
-                      ),
-                    ]
-                  ),
+                        // quadrado Peso e altura
+                        BoxInfo(
+                          key: const Key("histPesoButton"),
+                          textoTitulo: "Peso e altura",
+                          documentId: user.email!,
+                          campo: "altura",
+                        ),
+                      ]),
 
                   // coluna para exibir glicemia e IMC
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      BoxInfo(
-                        key: const Key("histGlicemiaButton"),
-                        textoTitulo: "Ultima aferição de glicemia",
-                        documentId: user.email!,
-                        campo: "glicemia",
-                      ),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        BoxInfo(
+                          key: const Key("histGlicemiaButton"),
+                          textoTitulo: "Ultima aferição de glicemia",
+                          documentId: user.email!,
+                          campo: "glicemia",
+                        ),
 
-                      // quadrado IMC
-                      BoxInfo(
-                        textoTitulo: "IMC",
-                        documentId: user.email!,
-                        campo: "IMC",
-                      ),
-                    ]
-                  ),
+                        // quadrado IMC
+                        BoxInfo(
+                          textoTitulo: "IMC",
+                          documentId: user.email!,
+                          campo: "IMC",
+                        ),
+                      ]),
                 ],
               ),
 
@@ -125,78 +123,87 @@ class _HomePageState extends State<HomePage> {
                     alignment: WrapAlignment.center,
                     children: [
                       Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                          fixedSize: WidgetStateProperty.all(const Size.fromWidth(120)),
-                          backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-                            if (states.contains(WidgetState.pressed)) {
-                              return const Color.fromARGB(255, 123, 167, 150);
-                            }
-                            return Colors.grey[200]!;
-                          }),
-                        ),
-                        onPressed: () {
-                          Navigator.pushNamed(
-                              context, '/specialty_consulta');
-                        },
-                        child: const Text('Consultas',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500
-                          ),
-                        )
-                      ),
+                        padding: const EdgeInsets.all(10),
+                        child: ElevatedButton(
+                            style: ButtonStyle(
+                              fixedSize: WidgetStateProperty.all(
+                                  const Size.fromWidth(120)),
+                              backgroundColor:
+                                  WidgetStateProperty.resolveWith<Color>(
+                                      (Set<WidgetState> states) {
+                                if (states.contains(WidgetState.pressed)) {
+                                  return const Color.fromARGB(
+                                      255, 123, 167, 150);
+                                }
+                                return Colors.grey[200]!;
+                              }),
+                            ),
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, '/specialty_consulta');
+                            },
+                            child: const Text(
+                              'Consultas',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500),
+                            )),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(10),
                         child: ElevatedButton(
-                          style: ButtonStyle(
-                            fixedSize: WidgetStateProperty.all(const Size.fromWidth(120)),
-                            backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-                              if (states.contains(WidgetState.pressed)) {
-                                return const Color.fromARGB(255, 123, 167, 150);
-                              }
-                              return Colors.grey[200]!;
-                            }),
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/remedios_page');
-                          },
-                          child: const Text('Remédios',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500
+                            style: ButtonStyle(
+                              fixedSize: WidgetStateProperty.all(
+                                  const Size.fromWidth(120)),
+                              backgroundColor:
+                                  WidgetStateProperty.resolveWith<Color>(
+                                      (Set<WidgetState> states) {
+                                if (states.contains(WidgetState.pressed)) {
+                                  return const Color.fromARGB(
+                                      255, 123, 167, 150);
+                                }
+                                return Colors.grey[200]!;
+                              }),
                             ),
-                          )
-                        ),
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/remedios_page');
+                            },
+                            child: const Text(
+                              'Remédios',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500),
+                            )),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(10),
                         child: ElevatedButton(
-                          style: ButtonStyle(
-                            fixedSize: WidgetStateProperty.all(const Size.fromWidth(120)),
-                            backgroundColor: WidgetStateProperty.resolveWith<Color>((Set<WidgetState> states) {
-                              if (states.contains(WidgetState.pressed)) {
-                                return const Color.fromARGB(255, 123, 167, 150);
-                              }
-                              return Colors.grey[200]!;
-                            }),
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(
-                                context, '/historico_exames_page');
-                          },
-                          child: const Text('Exames',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500
+                            style: ButtonStyle(
+                              fixedSize: WidgetStateProperty.all(
+                                  const Size.fromWidth(120)),
+                              backgroundColor:
+                                  WidgetStateProperty.resolveWith<Color>(
+                                      (Set<WidgetState> states) {
+                                if (states.contains(WidgetState.pressed)) {
+                                  return const Color.fromARGB(
+                                      255, 123, 167, 150);
+                                }
+                                return Colors.grey[200]!;
+                              }),
                             ),
-                          )
-                        ),
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                  context, '/historico_exames_page');
+                            },
+                            child: const Text(
+                              'Exames',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500),
+                            )),
                       ),
 
                       // const SizedBox(height: 50,),
@@ -208,7 +215,6 @@ class _HomePageState extends State<HomePage> {
                       //       },
                       //       child: const Text('TESTE PDF')),
                       // ),
-
                     ],
                   ),
                 ],
