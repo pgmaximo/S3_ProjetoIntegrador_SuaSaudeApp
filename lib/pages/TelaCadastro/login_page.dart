@@ -114,18 +114,18 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 25),
 
                 // esqueceu senha
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text("Esqueceu a senha?",
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                          )),
-                    ],
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.end,
+                //     children: [
+                //       Text("Esqueceu a senha?",
+                //           style: TextStyle(
+                //             color: Colors.grey[700],
+                //           )),
+                //     ],
+                //   ),
+                // ),
 
                 const SizedBox(height: 25),
 

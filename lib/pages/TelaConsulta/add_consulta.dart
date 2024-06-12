@@ -88,10 +88,10 @@ class _NovaConsultaState extends State<NovaConsulta> {
                 onTap: _selectReturnDate,
               ),
               const SizedBox(height: 15),
-              TextFormField(
-                controller: _lembreteController,
-                decoration: const InputDecoration(labelText: 'Lembrete para agendamento'),
-              ),
+              // TextFormField(
+              //   controller: _lembreteController,
+              //   decoration: const InputDecoration(labelText: 'Lembrete para agendamento'),
+              // ),
               const SizedBox(height: 40),
               TextButton(
                 style: ButtonStyle(
