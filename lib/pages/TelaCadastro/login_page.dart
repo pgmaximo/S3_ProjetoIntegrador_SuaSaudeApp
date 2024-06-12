@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                 MyTextField(
                   key: const Key("passfield"),
                   controller: passwordController,
-                  hintText: "password",
+                  hintText: "Senha",
                   obscureText: true,
                 ),
 
